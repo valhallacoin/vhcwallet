@@ -144,8 +144,8 @@ var TestNetParams = Params{
 	StakeMajorityDivisor:    4,
 
 	// Valhalla organization related parameters.
-	// Organization address is TcrypGAcGCRVXrES7hWqVZb5oLJKCZEtoL1.
-	OrganizationPkScript:        hexDecode("a914d585cd7426d25b4ea5faf1e6987aacfeda3db94287"),
+	// Organization address is TsmxvfRk9HMYtpbt4odeL6S8YpJZKYieFMQ
+	OrganizationPkScript:        hexDecode("76a914e5bf886b55b33f6ebb28075c63c8adf2e2203b0388ac"),
 	OrganizationPkScriptVersion: 0,
 	BlockOneLedger:              BlockOneLedgerTestNet,
 }
