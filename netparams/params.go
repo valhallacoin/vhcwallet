@@ -20,7 +20,7 @@ type Params struct {
 // vhcd on the main network (wire.MainNet).
 var MainNetParams = Params{
 	Params:            &chaincfg.MainNetParams,
-	JSONRPCClientPort: "9109",
+	JSONRPCClientPort: "9209",
 	JSONRPCServerPort: "9110",
 	GRPCServerPort:    "9111",
 }
@@ -29,7 +29,7 @@ var MainNetParams = Params{
 // vhcd on the test network (version 3) (wire.TestNet).
 var TestNetParams = Params{
 	Params:            &chaincfg.TestNetParams,
-	JSONRPCClientPort: "19109",
+	JSONRPCClientPort: "19209",
 	JSONRPCServerPort: "19110",
 	GRPCServerPort:    "19111",
 }
