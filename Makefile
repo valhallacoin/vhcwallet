@@ -1,7 +1,24 @@
-all:
-	env GO111MODULE=on go install -mod vendor -v .
+ifneq ($(GOPATH),)
+  prefix ?= $(GOPATH)
+endif
+prefix ?= /usr/local
+exec_prefix ?= $(prefix)
+ifneq ($(GOBIN),)
+  bindir ?= $(GOBIN)
+endif
+bindir ?= $(exec_prefix)/bin
 
-.PHONY: clean test update-vendor
+.PHONY: all install uninstall clean test update-vendor
+
+all:
+	env GO111MODULE=on go build -mod vendor -v .
+
+install:
+	env GO111MODULE=on GOBIN=$(bindir) go install -mod vendor -v .
+
+uninstall:
+	rm -f $(bindir)/vhcwallet
+
 clean:
 	rm -f vhcwallet
 
