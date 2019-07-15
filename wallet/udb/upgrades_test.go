@@ -15,11 +15,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/wire"
-	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/wire"
+	_ "github.com/valhallacoin/vhcwallet/wallet/drivers/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 var dbUpgradeTests = [...]struct {
@@ -42,7 +42,7 @@ var pubPass = []byte("public")
 func TestUpgrades(t *testing.T) {
 	t.Parallel()
 
-	d, err := ioutil.TempDir("", "dcrwallet_udb_TestUpgrades")
+	d, err := ioutil.TempDir("", "vhcwallet_udb_TestUpgrades")
 	if err != nil {
 		t.Fatal(err)
 	}

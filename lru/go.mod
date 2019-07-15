@@ -1,1 +1,1 @@
-module github.com/decred/dcrwallet/lru
+module github.com/valhallacoin/vhcwallet/lru

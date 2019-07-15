@@ -7,15 +7,15 @@
 package txauthor
 
 import (
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/dcrec"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	h "github.com/decred/dcrwallet/internal/helpers"
-	"github.com/decred/dcrwallet/wallet/internal/txsizes"
-	"github.com/decred/dcrwallet/wallet/txrules"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/vhcec"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	h "github.com/valhallacoin/vhcwallet/internal/helpers"
+	"github.com/valhallacoin/vhcwallet/wallet/internal/txsizes"
+	"github.com/valhallacoin/vhcwallet/wallet/txrules"
 )
 
 const (
@@ -33,7 +33,7 @@ const (
 // amount, the generated inputs, the redeem scripts and the full redeem
 // script sizes.
 type InputDetail struct {
-	Amount            dcrutil.Amount
+	Amount            vhcutil.Amount
 	Inputs            []*wire.TxIn
 	Scripts           [][]byte
 	RedeemScriptSizes []int
@@ -43,14 +43,14 @@ type InputDetail struct {
 // construct a transaction outputting some target amount.  If the target amount
 // can not be satisified, this can be signaled by returning a total amount less
 // than the target or by returning a more detailed error.
-type InputSource func(target dcrutil.Amount) (detail *InputDetail, err error)
+type InputSource func(target vhcutil.Amount) (detail *InputDetail, err error)
 
 // AuthoredTx holds the state of a newly-created transaction and the change
 // output (if one was added).
 type AuthoredTx struct {
 	Tx                           *wire.MsgTx
 	PrevScripts                  [][]byte
-	TotalInput                   dcrutil.Amount
+	TotalInput                   vhcutil.Amount
 	ChangeIndex                  int // negative if no change
 	EstimatedSignedSerializeSize int
 }
@@ -80,7 +80,7 @@ type ChangeSource interface {
 // output scripts are returned.  If the input source was unable to provide
 // enough input value to pay for every output any any necessary fees, an
 // InputSourceError is returned.
-func NewUnsignedTransaction(outputs []*wire.TxOut, relayFeePerKb dcrutil.Amount,
+func NewUnsignedTransaction(outputs []*wire.TxOut, relayFeePerKb vhcutil.Amount,
 	fetchInputs InputSource, fetchChange ChangeSource) (*AuthoredTx, error) {
 
 	const op errors.Op = "txauthor.NewUnsignedTransaction"
@@ -205,7 +205,7 @@ func AddAllInputScripts(tx *wire.MsgTx, prevPkScripts [][]byte, secrets SecretsS
 		sigScript := inputs[i].SignatureScript
 		script, err := txscript.SignTxOutput(chainParams, tx, i,
 			pkScript, txscript.SigHashAll, secrets, secrets,
-			sigScript, dcrec.STEcdsaSecp256k1)
+			sigScript, vhcec.STEcdsaSecp256k1)
 		if err != nil {
 			return err
 		}

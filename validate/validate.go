@@ -10,11 +10,11 @@ package validate
 import (
 	"bytes"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
 )
 
 // MerkleRoots recreates the merkle roots of regular and stake transactions from

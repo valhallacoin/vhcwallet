@@ -7,10 +7,10 @@ package wallet
 import (
 	"context"
 
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 // mockNetwork implements all methods of NetworkBackend, returning zero values
@@ -28,10 +28,10 @@ func (mockNetwork) GetHeaders(ctx context.Context, blockLocators []*chainhash.Ha
 	return nil, nil
 }
 func (mockNetwork) PublishTransactions(ctx context.Context, txs ...*wire.MsgTx) error { return nil }
-func (mockNetwork) LoadTxFilter(ctx context.Context, reload bool, addrs []dcrutil.Address, outpoints []wire.OutPoint) error {
+func (mockNetwork) LoadTxFilter(ctx context.Context, reload bool, addrs []vhcutil.Address, outpoints []wire.OutPoint) error {
 	return nil
 }
 func (mockNetwork) Rescan(ctx context.Context, blocks []chainhash.Hash, r RescanSaver) error {
 	return nil
 }
-func (mockNetwork) StakeDifficulty(ctx context.Context) (dcrutil.Amount, error) { return 0, nil }
+func (mockNetwork) StakeDifficulty(ctx context.Context) (vhcutil.Amount, error) { return 0, nil }

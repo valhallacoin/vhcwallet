@@ -85,7 +85,7 @@ rules of Semantic Versioning (SemVer) 2.0.0.
 ## `WalletLoaderService`
 
 The `WalletLoaderService` service provides the caller with functions related to
-the management of the wallet and its connection to the Decred network.  It has
+the management of the wallet and its connection to the Valhalla network.  It has
 no dependencies and is always running.
 
 **Methods:**
@@ -257,8 +257,8 @@ ___
 #### `StartConsensusRpc`
 
 The `StartConsensusRpc` method is used to provide clients the ability to
-dynamically start the dcrd RPC client.  This RPC client is used for wallet
-syncing and publishing transactions to the Decred network.
+dynamically start the vhcd RPC client.  This RPC client is used for wallet
+syncing and publishing transactions to the Valhalla network.
 
 Since API version 3.0.0, starting the consensus server no longer automatically
 synchronizes the wallet to the consensus server if it was previously loaded.
@@ -267,8 +267,8 @@ synchronizes the wallet to the consensus server if it was previously loaded.
 
 - `string network_address`: The host/IP and optional port of the RPC server to
   connect to.  IP addresses may be IPv4 or IPv6.  If the port is missing, a
-  default port is chosen corresponding to the default dcrd RPC port of the
-  active Decred network.
+  default port is chosen corresponding to the default vhcd RPC port of the
+  active Valhalla network.
 
 - `string username`: The RPC username required to authenticate to the RPC
   server.
@@ -489,8 +489,8 @@ or upon received an error.
 
 - `string network_address`: The host/IP and optional port of the RPC server to
   connect to.  IP addresses may be IPv4 or IPv6.  If the port is missing, a
-  default port is chosen corresponding to the default dcrd RPC port of the
-  active Decred network.
+  default port is chosen corresponding to the default vhcd RPC port of the
+  active Valhalla network.
 
 - `string username`: The RPC username required to authenticate to the RPC
   server.
@@ -1244,7 +1244,7 @@ wallet.
 
 - `string address`: The payment address string.
 
-- `string public_key`: The public key encoded as a string in the Decred encoding
+- `string public_key`: The public key encoded as a string in the Valhalla encoding
   format.
 
 **Expected errors:**
@@ -1726,7 +1726,7 @@ ___
 #### `PublishTransaction`
 
 The `PublishTransaction` method publishes a signed, serialized transaction to
-the Decred network.  If the transaction spends any of the wallet's unspent
+the Valhalla network.  If the transaction spends any of the wallet's unspent
 outputs or creates a new output controlled by the wallet, it is saved by the
 wallet and republished later if it or a double spend are not mined.
 
@@ -1783,7 +1783,7 @@ syncing.
 **Stability:** Unstable: The ticket price and height are pulled from separate
 daemon passthroughs and may race. Ideally these would be returned from stored
 values in the wallet when it updates from incoming stake ticket price
-notifications passed from the JSON RPC of dcrd. Right now, wallet block processing
+notifications passed from the JSON RPC of vhcd. Right now, wallet block processing
 is very slow and it's difficult for these notifications to stay in sync. In the
 future, this API may be completely removed in favour of a passthrough for that
 set of notifications.

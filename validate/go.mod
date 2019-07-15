@@ -1,8 +1,8 @@
-module github.com/decred/dcrwallet/validate
+module github.com/valhallacoin/vhcwallet/validate
 
 require (
-	github.com/decred/dcrd/blockchain v1.1.1
-	github.com/decred/dcrd/gcs v1.0.2
-	github.com/decred/dcrd/wire v1.2.0
-	github.com/decred/dcrwallet/errors v1.0.1
+	github.com/valhallacoin/vhcd/blockchain v1.1.1
+	github.com/valhallacoin/vhcd/gcs v1.0.2
+	github.com/valhallacoin/vhcd/wire v1.2.0
+	github.com/valhallacoin/vhcwallet/errors v1.0.1
 )

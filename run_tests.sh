@@ -9,7 +9,7 @@
 set -ex
 
 [[ ! "$GOVERSION" ]] && GOVERSION=1.11
-REPO=dcrwallet
+REPO=vhcwallet
 
 # To run on docker on windows, symlink /mnt/c to /c and then execute the script
 # from the repo path under /c.  See:
@@ -29,9 +29,9 @@ if [[ ! "$DOCKER" ]]; then
     exit
 fi
 
-DOCKER_IMAGE_TAG=decred-golang-builder-$GOVERSION
-$DOCKER pull decred/$DOCKER_IMAGE_TAG
-$DOCKER run --rm -it -v $(pwd):/src:Z decred/$DOCKER_IMAGE_TAG /bin/bash -c "\
+DOCKER_IMAGE_TAG=valhallacoin-golang-builder-$GOVERSION
+$DOCKER pull valhallacoin/$DOCKER_IMAGE_TAG
+$DOCKER run --rm -it -v $(pwd):/src:Z valhallacoin/$DOCKER_IMAGE_TAG /bin/bash -c "\
   cp -R /src ~/src && \
   cd ~/src && \
   env GOVERSION=$GOVERSION bash ./run_tests.sh"

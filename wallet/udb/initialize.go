@@ -5,9 +5,9 @@
 package udb
 
 import (
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // Initialize prepares an empty database for usage by initializing all buckets

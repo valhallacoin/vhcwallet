@@ -9,16 +9,16 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/p2p"
-	"github.com/decred/dcrwallet/validate"
-	"github.com/decred/dcrwallet/wallet"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/p2p"
+	"github.com/valhallacoin/vhcwallet/validate"
+	"github.com/valhallacoin/vhcwallet/wallet"
 )
 
 var _ wallet.NetworkBackend = (*Syncer)(nil)
@@ -93,7 +93,7 @@ func (s *Syncer) String() string {
 
 // LoadTxFilter implements the LoadTxFilter method of the wallet.NetworkBackend
 // interface.
-func (s *Syncer) LoadTxFilter(ctx context.Context, reload bool, addrs []dcrutil.Address, outpoints []wire.OutPoint) error {
+func (s *Syncer) LoadTxFilter(ctx context.Context, reload bool, addrs []vhcutil.Address, outpoints []wire.OutPoint) error {
 	s.filterMu.Lock()
 	if reload || s.rescanFilter == nil {
 		s.rescanFilter = wallet.NewRescanFilter(nil, nil)
@@ -279,6 +279,6 @@ FilterLoop:
 // is not queryable over wire protocol, and when the next stake difficulty is
 // available in a header commitment, the wallet will be able to determine this
 // itself without requiring the NetworkBackend.
-func (s *Syncer) StakeDifficulty(ctx context.Context) (dcrutil.Amount, error) {
+func (s *Syncer) StakeDifficulty(ctx context.Context) (vhcutil.Amount, error) {
 	return 0, errors.E(errors.Invalid, "stake difficulty is not queryable over wire protocol")
 }

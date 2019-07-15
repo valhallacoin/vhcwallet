@@ -16,14 +16,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	dcrrpcclient "github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 type rpcTestCase func(r *Harness, t *testing.T)
@@ -90,7 +90,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// For timing of block generation, create an OnBlockConnected notification
-	ntfnHandlersNode := dcrrpcclient.NotificationHandlers{
+	ntfnHandlersNode := vhcrpcclient.NotificationHandlers{
 		OnBlockConnected: func(blockHeader []byte, transactions [][]byte) {},
 	}
 
@@ -288,13 +288,13 @@ func testValidateAddress(r *Harness, t *testing.T) {
 		}
 
 		// Decode address
-		_, err = dcrutil.DecodeAddress(addrStr)
+		_, err = vhcutil.DecodeAddress(addrStr)
 		if err != nil {
 			t.Fatalf("Unable to decode address %s: %v", addr.String(), err)
 		}
 
 		// Try to validate an address that is not owned by wallet
-		otherAddress, err := dcrutil.DecodeAddress("SsqvxBX8MZC5iiKCgBscwt69jg4u4hHhDKU")
+		otherAddress, err := vhcutil.DecodeAddress("SsqvxBX8MZC5iiKCgBscwt69jg4u4hHhDKU")
 		if err != nil {
 			t.Fatalf("Unable to decode address %v: %v", otherAddress, err)
 		}
@@ -325,7 +325,7 @@ func testValidateAddress(r *Harness, t *testing.T) {
 	}
 	devSubAddrStr := addrs[0].String()
 
-	DevAddr, err := dcrutil.DecodeAddress(devSubAddrStr)
+	DevAddr, err := vhcutil.DecodeAddress(devSubAddrStr)
 	if err != nil {
 		t.Fatalf("Unable to decode address %s: %v", devSubAddrStr, err)
 	}
@@ -374,9 +374,9 @@ func testWalletPassphrase(r *Harness, t *testing.T) {
 	// Try incorrect password
 	err = wcl.WalletPassphrase("Wrong Password", 0)
 	// Check for "-14: invalid passphrase for master private key"
-	if err != nil && err.(*dcrjson.RPCError).Code !=
-		dcrjson.ErrRPCWalletPassphraseIncorrect {
-		// dcrjson.ErrWalletPassphraseIncorrect.Code
+	if err != nil && err.(*vhcjson.RPCError).Code !=
+		vhcjson.ErrRPCWalletPassphraseIncorrect {
+		// vhcjson.ErrWalletPassphraseIncorrect.Code
 		t.Fatalf("WalletPassphrase with INCORRECT passphrase exited with: %v",
 			err)
 	}
@@ -396,11 +396,11 @@ func testWalletPassphrase(r *Harness, t *testing.T) {
 	if err == nil {
 		t.Fatal("createnewaccount succeeded on a locked wallet.")
 	}
-	// dcrjson.ErrRPCWalletUnlockNeeded
+	// vhcjson.ErrRPCWalletUnlockNeeded
 	if !strings.HasPrefix(err.Error(),
-		strconv.Itoa(int(dcrjson.ErrRPCWalletUnlockNeeded))) {
+		strconv.Itoa(int(vhcjson.ErrRPCWalletUnlockNeeded))) {
 		t.Fatalf("createnewaccount returned error (%v) instead of %v",
-			err, dcrjson.ErrRPCWalletUnlockNeeded)
+			err, vhcjson.ErrRPCWalletUnlockNeeded)
 	}
 
 	// Unlock with correct passphrase
@@ -421,8 +421,8 @@ func testWalletPassphrase(r *Harness, t *testing.T) {
 	// Check for ErrRPCWalletAlreadyUnlocked
 	err = wcl.WalletPassphrase(defaultWalletPassphrase, 0)
 	// Check for "-17: Wallet is already unlocked"
-	if err != nil && err.(*dcrjson.RPCError).Code !=
-		dcrjson.ErrRPCWalletAlreadyUnlocked {
+	if err != nil && err.(*vhcjson.RPCError).Code !=
+		vhcjson.ErrRPCWalletAlreadyUnlocked {
 		t.Fatalf("WalletPassphrase failed: %v", err)
 	}
 
@@ -497,14 +497,14 @@ func testGetBalance(r *Harness, t *testing.T) {
 	}
 
 	preAccountBalanceSpendable := 0.0
-	preAccountBalances := make(map[string]dcrjson.GetAccountBalanceResult)
+	preAccountBalances := make(map[string]vhcjson.GetAccountBalanceResult)
 	for _, bal := range preBalances.Balances {
 		preAccountBalanceSpendable += bal.Spendable
 		preAccountBalances[bal.AccountName] = bal
 	}
 
 	// Send from default to test account
-	sendAmount := dcrutil.Amount(700000000)
+	sendAmount := vhcutil.Amount(700000000)
 	if _, err = wcl.SendFromMinConf("default", addr, sendAmount, 1); err != nil {
 		t.Fatalf("SendFromMinConf failed: %v", err)
 	}
@@ -516,7 +516,7 @@ func testGetBalance(r *Harness, t *testing.T) {
 	}
 
 	postAccountBalanceSpendable := 0.0
-	postAccountBalances := make(map[string]dcrjson.GetAccountBalanceResult)
+	postAccountBalances := make(map[string]vhcjson.GetAccountBalanceResult)
 	for _, bal := range postBalances.Balances {
 		postAccountBalanceSpendable += bal.Spendable
 		postAccountBalances[bal.AccountName] = bal
@@ -657,7 +657,7 @@ func testListAccounts(r *Harness, t *testing.T) {
 	acctBalancePreSend := accountsBalancesMinconf0PreSend[accountName]
 
 	// Send from default to test account
-	sendAmount := dcrutil.Amount(700000000)
+	sendAmount := vhcutil.Amount(700000000)
 	if _, err = wcl.SendFromMinConf("default", addr, sendAmount, 1); err != nil {
 		t.Fatal("SendFromMinConf failed.", err)
 	}
@@ -821,7 +821,7 @@ func testListUnspent(r *Harness, t *testing.T) {
 	}
 
 	// SendFromMinConf to addr
-	amountToSend := dcrutil.Amount(700000000)
+	amountToSend := vhcutil.Amount(700000000)
 	txid, err := wcl.SendFromMinConf("default", addr, amountToSend, 0)
 	if err != nil {
 		t.Fatalf("sendfromminconf failed: %v", err)
@@ -832,7 +832,7 @@ func testListUnspent(r *Harness, t *testing.T) {
 	// New block is necessary for GetRawTransaction to give a tx with sensible
 	// MsgTx().TxIn[:].ValueIn values.
 
-	// Get *dcrutil.Tx of send to check the inputs
+	// Get *vhcutil.Tx of send to check the inputs
 	rawTx, err := r.Node.GetRawTransaction(txid)
 	if err != nil {
 		t.Fatalf("getrawtransaction failed: %v", err)
@@ -843,14 +843,14 @@ func testListUnspent(r *Harness, t *testing.T) {
 	for _, txIn := range rawTx.MsgTx().TxIn {
 		prevOut := &txIn.PreviousOutPoint
 		// Outpoint.String() appends :index to the hash
-		txInIDs[prevOut.String()] = dcrutil.Amount(txIn.ValueIn).ToCoin()
+		txInIDs[prevOut.String()] = vhcutil.Amount(txIn.ValueIn).ToCoin()
 	}
 
 	// First check to make sure we see these in the UTXO list prior to send,
 	// then not in the UTXO list after send.
 	for txinID, amt := range txInIDs {
 		if _, ok := utxosBeforeSend[txinID]; !ok {
-			t.Fatalf("Failed to find txid %v (%v DCR) in list of UTXOs",
+			t.Fatalf("Failed to find txid %v (%v VHC) in list of UTXOs",
 				txinID, amt)
 		}
 	}
@@ -873,7 +873,7 @@ func testListUnspent(r *Harness, t *testing.T) {
 		}
 		if amt, ok := txInIDs[outpointStr]; ok {
 			t.Fatalf("Found PreviousOutPoint of send still in UTXO set: %v, "+
-				"%v DCR", outpointStr, amt)
+				"%v VHC", outpointStr, amt)
 		}
 	}
 }
@@ -964,7 +964,7 @@ func testSendFrom(r *Harness, t *testing.T) {
 		t.Fatal(err)
 	}
 
-	amountToSend := dcrutil.Amount(1000000)
+	amountToSend := vhcutil.Amount(1000000)
 	// Check spendable balance of default account
 	defaultBalanceBeforeSend, err := r.WalletRPC.GetBalanceMinConf("default", 0)
 	if err != nil {
@@ -1044,7 +1044,7 @@ func testSendFrom(r *Harness, t *testing.T) {
 		totalSent += txOut.Value
 	}
 
-	fee := dcrutil.Amount(totalSpent - totalSent)
+	fee := vhcutil.Amount(totalSpent - totalSent)
 
 	// Calculate the expected balance for the default account after the tx was sent
 	expectedBalance := defaultBalanceBeforeSend.Balances[0].Spendable - (amountToSend + fee).ToCoin()
@@ -1096,8 +1096,8 @@ func testSendMany(r *Harness, t *testing.T) {
 
 	// Create 2 accounts to receive funds
 	accountNames := []string{"sendManyTestA", "sendManyTestB"}
-	amountsToSend := []dcrutil.Amount{700000000, 1400000000}
-	addresses := []dcrutil.Address{}
+	amountsToSend := []vhcutil.Amount{700000000, 1400000000}
+	addresses := []vhcutil.Address{}
 
 	var err error
 	for _, acct := range accountNames {
@@ -1109,8 +1109,8 @@ func testSendMany(r *Harness, t *testing.T) {
 
 	// Grab new addresses from the wallet, under each account.
 	// Set corresponding amount to send to each address.
-	addressAmounts := make(map[dcrutil.Address]dcrutil.Amount)
-	totalAmountToSend := dcrutil.Amount(0)
+	addressAmounts := make(map[vhcutil.Address]vhcutil.Amount)
+	totalAmountToSend := vhcutil.Amount(0)
 
 	for i, acct := range accountNames {
 		addr, err := wcl.GetNewAddress(acct)
@@ -1266,7 +1266,7 @@ func testListTransactions(r *Harness, t *testing.T) {
 	}
 
 	// "regular" not "stake" txtype
-	if *txList1[0].TxType != dcrjson.LTTTRegular {
+	if *txList1[0].TxType != vhcjson.LTTTRegular {
 		t.Fatal(`txtype not "regular".`)
 	}
 
@@ -1293,7 +1293,7 @@ func testListTransactions(r *Harness, t *testing.T) {
 		t.Fatal("Too few vouts.")
 	}
 	txOut := rawTx.MsgTx().TxOut[txList1[0].Vout]
-	voutAmt := dcrutil.Amount(txOut.Value).ToCoin()
+	voutAmt := vhcutil.Amount(txOut.Value).ToCoin()
 	// Verify amounts agree
 	if txList1[0].Amount != voutAmt {
 		t.Fatalf("Listed amount %v does not match expected vout amount %v",
@@ -1330,7 +1330,7 @@ func testListTransactions(r *Harness, t *testing.T) {
 		t.Fatal("Failed to get new address.")
 	}
 
-	sendAmount := dcrutil.Amount(240000000)
+	sendAmount := vhcutil.Amount(240000000)
 	txHash, err := wcl.SendFromMinConf("default", addr, sendAmount, 6)
 	if err != nil {
 		t.Fatal("Failed to send:", err)
@@ -1352,12 +1352,12 @@ func testListTransactions(r *Harness, t *testing.T) {
 
 	// The top of the list should be one send and one receive.  The coinbase
 	// spend should be lower in the list.
-	var sendResult, recvResult dcrjson.ListTransactionsResult
+	var sendResult, recvResult vhcjson.ListTransactionsResult
 	if txListAll[0].Category == txListAll[1].Category {
 		t.Fatal("Expected one send and one receive, got two", txListAll[0].Category)
 	}
 	// Use a map since order doesn't matter, and keys are not duplicate
-	rxtxResults := map[string]dcrjson.ListTransactionsResult{
+	rxtxResults := map[string]vhcjson.ListTransactionsResult{
 		txListAll[0].Category: txListAll[0],
 		txListAll[1].Category: txListAll[1],
 	}
@@ -1443,7 +1443,7 @@ func testListTransactions(r *Harness, t *testing.T) {
 
 	// Create 2 accounts to receive funds
 	accountNames := []string{"listTxA", "listTxB"}
-	amountsToSend := []dcrutil.Amount{700000000, 1400000000}
+	amountsToSend := []vhcutil.Amount{700000000, 1400000000}
 
 	for _, acct := range accountNames {
 		err := wcl.CreateNewAccount(acct)
@@ -1454,7 +1454,7 @@ func testListTransactions(r *Harness, t *testing.T) {
 
 	// Grab new addresses from the wallet, under each account.
 	// Set corresponding amount to send to each address.
-	addressAmounts := make(map[dcrutil.Address]dcrutil.Amount)
+	addressAmounts := make(map[vhcutil.Address]vhcutil.Amount)
 
 	for i, acct := range accountNames {
 		addr, err := wcl.GetNewAddress(acct)
@@ -1484,7 +1484,7 @@ func testListTransactions(r *Harness, t *testing.T) {
 }
 
 func testGetSetRelayFee(r *Harness, t *testing.T) {
-	// dcrrpcclient does not have a getwalletfee or any direct method, so we
+	// vhcrpcclient does not have a getwalletfee or any direct method, so we
 	// need to use walletinfo to get.  SetTxFee can be used to set.
 
 	// Wallet RPC client
@@ -1496,13 +1496,13 @@ func testGetSetRelayFee(r *Harness, t *testing.T) {
 		t.Fatal("WalletInfo failed:", err)
 	}
 	// Save the original fee
-	origTxFee, err := dcrutil.NewAmount(walletInfo.TxFee)
+	origTxFee, err := vhcutil.NewAmount(walletInfo.TxFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TxFee, err)
 	}
 	// Increase fee by 50%
 	newTxFeeCoin := walletInfo.TxFee * 1.5
-	newTxFee, err := dcrutil.NewAmount(newTxFeeCoin)
+	newTxFee, err := vhcutil.NewAmount(newTxFeeCoin)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", newTxFeeCoin, err)
 	}
@@ -1517,7 +1517,7 @@ func testGetSetRelayFee(r *Harness, t *testing.T) {
 	if err != nil {
 		t.Fatal("WalletInfo failed:", err)
 	}
-	newTxFeeActual, err := dcrutil.NewAmount(walletInfo.TxFee)
+	newTxFeeActual, err := vhcutil.NewAmount(walletInfo.TxFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TxFee, err)
 	}
@@ -1539,7 +1539,7 @@ func testGetSetRelayFee(r *Harness, t *testing.T) {
 	}
 
 	// SendFromMinConf to addr
-	amountToSend := dcrutil.Amount(700000000)
+	amountToSend := vhcutil.Amount(700000000)
 	txid, err := wcl.SendFromMinConf("default", addr, amountToSend, 0)
 	if err != nil {
 		t.Fatalf("sendfromminconf failed: %v", err)
@@ -1564,7 +1564,7 @@ func testGetSetRelayFee(r *Harness, t *testing.T) {
 	}
 
 	// Negative fee should throw an error
-	err = wcl.SetTxFee(dcrutil.Amount(-1))
+	err = wcl.SetTxFee(vhcutil.Amount(-1))
 	if err == nil {
 		t.Fatal("SetTxFee accepted negative fee")
 	}
@@ -1580,7 +1580,7 @@ func testGetSetRelayFee(r *Harness, t *testing.T) {
 }
 
 func testGetSetTicketFee(r *Harness, t *testing.T) {
-	// dcrrpcclient does not have a getticketee or any direct method, so we
+	// vhcrpcclient does not have a getticketee or any direct method, so we
 	// need to use walletinfo to get.  SetTicketFee can be used to set.
 
 	// Wallet RPC client
@@ -1592,14 +1592,14 @@ func testGetSetTicketFee(r *Harness, t *testing.T) {
 		t.Fatal("WalletInfo failed:", err)
 	}
 	nominalTicketFee := walletInfo.TicketFee
-	origTicketFee, err := dcrutil.NewAmount(nominalTicketFee)
+	origTicketFee, err := vhcutil.NewAmount(nominalTicketFee)
 	if err != nil {
 		t.Fatal("Invalid Amount:", nominalTicketFee)
 	}
 
 	// Increase the ticket fee to ensure the SSTx in ths test gets mined
 	newTicketFeeCoin := nominalTicketFee * 1.5
-	newTicketFee, err := dcrutil.NewAmount(newTicketFeeCoin)
+	newTicketFee, err := vhcutil.NewAmount(newTicketFeeCoin)
 	if err != nil {
 		t.Fatal("Invalid Amount:", newTicketFeeCoin)
 	}
@@ -1615,7 +1615,7 @@ func testGetSetTicketFee(r *Harness, t *testing.T) {
 		t.Fatal("WalletInfo failed:", err)
 	}
 	nominalTicketFee = walletInfo.TicketFee
-	newTicketFeeActual, err := dcrutil.NewAmount(nominalTicketFee)
+	newTicketFeeActual, err := vhcutil.NewAmount(nominalTicketFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", nominalTicketFee, err)
 	}
@@ -1626,7 +1626,7 @@ func testGetSetTicketFee(r *Harness, t *testing.T) {
 
 	// Purchase ticket
 	minConf, numTickets := 0, 1
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := vhcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount. ", err)
 	}
@@ -1663,7 +1663,7 @@ func testGetSetTicketFee(r *Harness, t *testing.T) {
 	}
 
 	// Negative fee should throw and error
-	err = wcl.SetTicketFee(dcrutil.Amount(-1))
+	err = wcl.SetTicketFee(vhcutil.Amount(-1))
 	if err == nil {
 		t.Fatal("SetTicketFee accepted negative fee")
 	}
@@ -1701,7 +1701,7 @@ func testGetTickets(r *Harness, t *testing.T) {
 
 	// Purchase a full blocks worth of tickets
 	minConf, numTicketsPurchased := 1, int(chaincfg.SimNetParams.MaxFreshStakePerBlock)
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := vhcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount. ", err)
 	}
@@ -1775,7 +1775,7 @@ func testPurchaseTickets(r *Harness, t *testing.T) {
 	// Set various variables for the test
 	minConf := 0
 	expiry := 0
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := vhcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount.", err)
 	}
@@ -1853,11 +1853,11 @@ func testPurchaseTickets(r *Harness, t *testing.T) {
 	if err != nil {
 		t.Fatal("WalletInfo failed.", err)
 	}
-	origTicketFee, err := dcrutil.NewAmount(walletInfo.TicketFee)
+	origTicketFee, err := vhcutil.NewAmount(walletInfo.TicketFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TicketFee, err)
 	}
-	newTicketFee, err := dcrutil.NewAmount(walletInfo.TicketFee * 1.5)
+	newTicketFee, err := vhcutil.NewAmount(walletInfo.TicketFee * 1.5)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TicketFee, err)
 	}
@@ -1897,7 +1897,7 @@ func testPurchaseTickets(r *Harness, t *testing.T) {
 	}
 
 	// Test too low price
-	lowPrice := dcrutil.Amount(1)
+	lowPrice := vhcutil.Amount(1)
 	hashes, err = wcl.PurchaseTicket("default", lowPrice,
 		&minConf, nil, nil, nil, nil, nil, &noSplitTransactions, nil)
 	if err == nil {
@@ -1915,7 +1915,7 @@ func testPurchaseTickets(r *Harness, t *testing.T) {
 	desiredHeight := uint32(150)
 	numTicket = int(chaincfg.SimNetParams.MaxFreshStakePerBlock)
 	for curBlockHeight < desiredHeight {
-		priceLimit, err = dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+		priceLimit, err = vhcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 		if err != nil {
 			t.Fatal("Invalid Amount.", err)
 		}
@@ -1995,7 +1995,7 @@ func testGetStakeInfo(r *Harness, t *testing.T) {
 
 	// Buy tickets to check that they shows up in ownmempooltix/allmempooltix
 	minConf := 1
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := vhcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount.", err)
 	}
@@ -2070,7 +2070,7 @@ func testGetStakeInfo(r *Harness, t *testing.T) {
 	// Buy some more tickets (4 blocks worth) so chain doesn't stall when voting
 	// burns through the batch purchased above
 	for i := 0; i < 4; i++ {
-		priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+		priceLimit, err := vhcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 		if err != nil {
 			t.Fatal("Invalid Amount.", err)
 		}
@@ -2141,7 +2141,7 @@ func testWalletInfo(r *Harness, t *testing.T) {
 ///////////////////////////////////////////////////////////////////////////////
 // Helper functions
 
-func mustGetStakeInfo(wcl *dcrrpcclient.Client, t *testing.T) *dcrjson.GetStakeInfoResult {
+func mustGetStakeInfo(wcl *vhcrpcclient.Client, t *testing.T) *vhcjson.GetStakeInfoResult {
 	stakeinfo, err := wcl.GetStakeInfo()
 	if err != nil {
 		t.Fatal("GetStakeInfo failed: ", err)
@@ -2184,7 +2184,7 @@ func advanceToHeight(r *Harness, t *testing.T, height uint32) {
 }
 
 func newBlockAt(currentHeight uint32, r *Harness,
-	t *testing.T) (uint32, *dcrutil.Block, []*chainhash.Hash) {
+	t *testing.T) (uint32, *vhcutil.Block, []*chainhash.Hash) {
 	height, block, blockHashes := newBlockAtQuick(currentHeight, r, t)
 
 	time.Sleep(700 * time.Millisecond)
@@ -2193,7 +2193,7 @@ func newBlockAt(currentHeight uint32, r *Harness,
 }
 
 func newBlockAtQuick(currentHeight uint32, r *Harness,
-	t *testing.T) (uint32, *dcrutil.Block, []*chainhash.Hash) {
+	t *testing.T) (uint32, *vhcutil.Block, []*chainhash.Hash) {
 
 	blockHashes, err := r.GenerateBlock(currentHeight)
 	if err != nil {
@@ -2205,10 +2205,10 @@ func newBlockAtQuick(currentHeight uint32, r *Harness,
 		t.Fatalf("Unable to get block: %v", err)
 	}
 
-	return block.Header.Height, dcrutil.NewBlock(block), blockHashes
+	return block.Header.Height, vhcutil.NewBlock(block), blockHashes
 }
 
-func getBestBlock(r *Harness, t *testing.T) (uint32, *dcrutil.Block, *chainhash.Hash) {
+func getBestBlock(r *Harness, t *testing.T) (uint32, *vhcutil.Block, *chainhash.Hash) {
 	bestBlockHash, err := r.Node.GetBestBlockHash()
 	if err != nil {
 		t.Fatalf("Unable to get best block hash: %v", err)
@@ -2219,7 +2219,7 @@ func getBestBlock(r *Harness, t *testing.T) (uint32, *dcrutil.Block, *chainhash.
 	}
 	curBlockHeight := bestBlock.Header.Height
 
-	return curBlockHeight, dcrutil.NewBlock(bestBlock), bestBlockHash
+	return curBlockHeight, vhcutil.NewBlock(bestBlock), bestBlockHash
 }
 
 func getBestBlockHeight(r *Harness, t *testing.T) uint32 {
@@ -2232,14 +2232,14 @@ func getBestBlockHeight(r *Harness, t *testing.T) uint32 {
 }
 
 func newBestBlock(r *Harness,
-	t *testing.T) (uint32, *dcrutil.Block, []*chainhash.Hash) {
+	t *testing.T) (uint32, *vhcutil.Block, []*chainhash.Hash) {
 	height := getBestBlockHeight(r, t)
 	height, block, blockHash := newBlockAt(height, r, t)
 	return height, block, blockHash
 }
 
 // includesTx checks if a block contains a transaction hash
-func includesTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
+func includesTx(txHash *chainhash.Hash, block *vhcutil.Block) bool {
 	if len(block.Transactions()) <= 1 {
 		return false
 	}
@@ -2257,7 +2257,7 @@ func includesTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
 }
 
 // includesTx checks if a block contains a transaction hash
-func includesStakeTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
+func includesStakeTx(txHash *chainhash.Hash, block *vhcutil.Block) bool {
 	if len(block.STransactions()) <= 1 {
 		return false
 	}
@@ -2276,7 +2276,7 @@ func includesStakeTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
 
 // getWireMsgTxFee computes the effective absolute fee from a Tx as the amount
 // spent minus sent.
-func getWireMsgTxFee(tx *dcrutil.Tx) dcrutil.Amount {
+func getWireMsgTxFee(tx *vhcutil.Tx) vhcutil.Amount {
 	var totalSpent int64
 	for _, txIn := range tx.MsgTx().TxIn {
 		totalSpent += txIn.ValueIn
@@ -2287,12 +2287,12 @@ func getWireMsgTxFee(tx *dcrutil.Tx) dcrutil.Amount {
 		totalSent += txOut.Value
 	}
 
-	return dcrutil.Amount(totalSpent - totalSent)
+	return vhcutil.Amount(totalSpent - totalSent)
 }
 
 // getOutPointString uses OutPoint.String() to combine the tx hash with vout
 // index from a ListUnspentResult.
-func getOutPointString(utxo *dcrjson.ListUnspentResult) (string, error) {
+func getOutPointString(utxo *vhcjson.ListUnspentResult) (string, error) {
 	txhash, err := chainhash.NewHashFromStr(utxo.TxID)
 	if err != nil {
 		return "", err

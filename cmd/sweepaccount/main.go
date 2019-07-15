@@ -12,21 +12,21 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	dcrrpcclient "github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/wallet/txauthor"
-	"github.com/decred/dcrwallet/wallet/txrules"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/wallet/txauthor"
+	"github.com/valhallacoin/vhcwallet/wallet/txrules"
 	"github.com/jessevdk/go-flags"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
 var (
-	walletDataDirectory = dcrutil.AppDataDir("dcrwallet", false)
+	walletDataDirectory = vhcutil.AppDataDir("vhcwallet", false)
 	newlineBytes        = []byte{'\n'}
 )
 
@@ -42,8 +42,8 @@ func errContext(err error, context string) error {
 
 // Flags.
 var opts = struct {
-	TestNet               bool    `long:"testnet" description:"Use the test decred network"`
-	SimNet                bool    `long:"simnet" description:"Use the simulation decred network"`
+	TestNet               bool    `long:"testnet" description:"Use the test valhallacoin network"`
+	SimNet                bool    `long:"simnet" description:"Use the simulation valhallacoin network"`
 	RPCConnect            string  `short:"c" long:"connect" description:"Hostname[:port] of wallet RPC server"`
 	RPCUsername           string  `short:"u" long:"rpcuser" description:"Wallet RPC username"`
 	RPCPassword           string  `short:"P" long:"rpcpass" description:"Wallet RPC password"`
@@ -119,7 +119,7 @@ func init() {
 	}
 
 	if opts.TestNet && opts.SimNet {
-		fatalf("Multiple decred networks may not be used simultaneously")
+		fatalf("Multiple valhallacoin networks may not be used simultaneously")
 	}
 	var activeNet = &chaincfg.MainNetParams
 	if opts.TestNet {
@@ -182,15 +182,15 @@ func (noInputValue) Error() string { return "no input value" }
 // output is consumed.  The InputSource does not return any previous output
 // scripts as they are not needed for creating the unsinged transaction and are
 // looked up again by the wallet during the call to signrawtransaction.
-func makeInputSource(outputs []dcrjson.ListUnspentResult) txauthor.InputSource {
+func makeInputSource(outputs []vhcjson.ListUnspentResult) txauthor.InputSource {
 	var (
-		totalInputValue   dcrutil.Amount
+		totalInputValue   vhcutil.Amount
 		inputs            = make([]*wire.TxIn, 0, len(outputs))
 		redeemScriptSizes = make([]int, 0, len(outputs))
 		sourceErr         error
 	)
 	for _, output := range outputs {
-		outputAmount, err := dcrutil.NewAmount(output.Amount)
+		outputAmount, err := vhcutil.NewAmount(output.Amount)
 		if err != nil {
 			sourceErr = fmt.Errorf(
 				"invalid amount `%v` in listunspent result",
@@ -223,7 +223,7 @@ func makeInputSource(outputs []dcrjson.ListUnspentResult) txauthor.InputSource {
 		sourceErr = noInputValue{}
 	}
 
-	return func(dcrutil.Amount) (*txauthor.InputDetail, error) {
+	return func(vhcutil.Amount) (*txauthor.InputDetail, error) {
 		inputDetail := txauthor.InputDetail{
 			Amount:            totalInputValue,
 			Inputs:            inputs,
@@ -238,7 +238,7 @@ func makeInputSource(outputs []dcrjson.ListUnspentResult) txauthor.InputSource {
 // all correlated previous input value.
 type destinationScriptSourceToAccount struct {
 	accountName string
-	rpcClient   *dcrrpcclient.Client
+	rpcClient   *vhcrpcclient.Client
 }
 
 // Source creates a non-change address.
@@ -268,7 +268,7 @@ type destinationScriptSourceToAddress struct {
 
 // Source creates a non-change address.
 func (src *destinationScriptSourceToAddress) Script() ([]byte, uint16, error) {
-	destinationAddress, err := dcrutil.DecodeAddress(src.address)
+	destinationAddress, err := vhcutil.DecodeAddress(src.address)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -304,7 +304,7 @@ func sweep() error {
 	if err != nil {
 		return errContext(err, "failed to read RPC certificate")
 	}
-	rpcClient, err := dcrrpcclient.New(&dcrrpcclient.ConnConfig{
+	rpcClient, err := vhcrpcclient.New(&vhcrpcclient.ConnConfig{
 		Host:         opts.RPCConnect,
 		User:         opts.RPCUsername,
 		Pass:         rpcPassword,
@@ -324,7 +324,7 @@ func sweep() error {
 	if err != nil {
 		return errContext(err, "failed to fetch unspent outputs")
 	}
-	sourceOutputs := make(map[string][]dcrjson.ListUnspentResult)
+	sourceOutputs := make(map[string][]vhcjson.ListUnspentResult)
 	for _, unspentOutput := range unspentOutputs {
 		if !unspentOutput.Spendable {
 			continue
@@ -356,14 +356,14 @@ func sweep() error {
 		}
 	}
 
-	var totalSwept dcrutil.Amount
+	var totalSwept vhcutil.Amount
 	var numErrors int
 	var reportError = func(format string, args ...interface{}) {
 		fmt.Fprintf(os.Stderr, format, args...)
 		os.Stderr.Write(newlineBytes)
 		numErrors++
 	}
-	feeRate, err := dcrutil.NewAmount(opts.FeeRate)
+	feeRate, err := vhcutil.NewAmount(opts.FeeRate)
 	if err != nil {
 		return errContext(err, "invalid fee rate")
 	}
@@ -430,7 +430,7 @@ func sweep() error {
 			txHash = hash.String()
 		}
 
-		outputAmount := dcrutil.Amount(atx.Tx.TxOut[0].Value)
+		outputAmount := vhcutil.Amount(atx.Tx.TxOut[0].Value)
 		fmt.Printf("Swept %v to destination with transaction %v\n",
 			outputAmount, txHash)
 		totalSwept += outputAmount
@@ -460,11 +460,11 @@ func promptSecret(what string) (string, error) {
 	return string(input), nil
 }
 
-func saneOutputValue(amount dcrutil.Amount) bool {
-	return amount >= 0 && amount <= dcrutil.MaxAmount
+func saneOutputValue(amount vhcutil.Amount) bool {
+	return amount >= 0 && amount <= vhcutil.MaxAmount
 }
 
-func parseOutPoint(input *dcrjson.ListUnspentResult) (wire.OutPoint, error) {
+func parseOutPoint(input *vhcjson.ListUnspentResult) (wire.OutPoint, error) {
 	txHash, err := chainhash.NewHashFromStr(input.TxID)
 	if err != nil {
 		return wire.OutPoint{}, err

@@ -8,10 +8,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet"
 )
 
 const minconf = 1
@@ -25,13 +25,13 @@ type Config struct {
 	VotingAccount uint32
 
 	// Minimum amount to maintain in purchasing account
-	Maintain dcrutil.Amount
+	Maintain vhcutil.Amount
 
 	// Address to assign voting rights; overrides VotingAccount
-	VotingAddr dcrutil.Address
+	VotingAddr vhcutil.Address
 
 	// Commitment address for stakepool fees
-	PoolFeeAddr dcrutil.Address
+	PoolFeeAddr vhcutil.Address
 
 	// Stakepool fee percentage (between 0-100)
 	PoolFees float64

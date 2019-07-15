@@ -8,13 +8,13 @@ import (
 	"math/big"
 	"sort"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // SidechainForest provides in-memory management of sidechain and orphan blocks.

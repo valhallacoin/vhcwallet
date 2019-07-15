@@ -7,11 +7,11 @@ package udb
 import (
 	"testing"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 func TestCoinTypes(t *testing.T) {
@@ -38,7 +38,7 @@ func TestCoinTypes(t *testing.T) {
 	}
 }
 
-func deriveChildAddress(accountExtKey *hdkeychain.ExtendedKey, branch, child uint32, params *chaincfg.Params) (dcrutil.Address, error) {
+func deriveChildAddress(accountExtKey *hdkeychain.ExtendedKey, branch, child uint32, params *chaincfg.Params) (vhcutil.Address, error) {
 	branchKey, err := accountExtKey.Child(branch)
 	if err != nil {
 		return nil, err

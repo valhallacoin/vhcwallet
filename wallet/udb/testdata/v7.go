@@ -16,18 +16,18 @@ import (
 	"os"
 	"time"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainec"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrec/secp256k1"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	_ "github.com/decred/dcrwallet/wallet/internal/bdb"
-	"github.com/decred/dcrwallet/wallet/udb"
-	"github.com/decred/dcrwallet/walletseed"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainec"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcec/secp256k1"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	_ "github.com/valhallacoin/vhcwallet/wallet/internal/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
+	"github.com/valhallacoin/vhcwallet/walletseed"
 )
 
 const dbname = "v7.db"
@@ -83,7 +83,7 @@ func setup() error {
 		}
 
 		privKey, _ := secp256k1.PrivKeyFromBytes(privKey)
-		wif, err := dcrutil.NewWIF(privKey, chainParams, chainec.ECTypeSecp256k1)
+		wif, err := vhcutil.NewWIF(privKey, chainParams, chainec.ECTypeSecp256k1)
 		if err != nil {
 			return err
 		}
@@ -132,7 +132,7 @@ func setup() error {
 			if err != nil {
 				return errors.Errorf("failed to create pkscript: %s", err)
 			}
-			msgTx.AddTxOut(wire.NewTxOut(int64(dcrutil.Amount(1*count)), pkScript))
+			msgTx.AddTxOut(wire.NewTxOut(int64(vhcutil.Amount(1*count)), pkScript))
 			rec, err := udb.NewTxRecordFromMsgTx(msgTx, epoch)
 			if err != nil {
 				return err
@@ -149,7 +149,7 @@ func setup() error {
 
 		// Add 3 unmined credits with expiries set
 		for count := 1; count < 4; count++ {
-			faucetAddr, err := dcrutil.DecodeAddress("TsWjioPrP8E1TuTMmTrVMM2BA4iPrjQXBpR")
+			faucetAddr, err := vhcutil.DecodeAddress("TsWjioPrP8E1TuTMmTrVMM2BA4iPrjQXBpR")
 			if err != nil {
 				return errors.Errorf("failed to decode address: %s", err)
 			}
@@ -159,7 +159,7 @@ func setup() error {
 			if err != nil {
 				return errors.Errorf("failed to create pkscript: %s", err)
 			}
-			msgTx.AddTxOut(wire.NewTxOut(int64(dcrutil.Amount(1*count)), pkScript))
+			msgTx.AddTxOut(wire.NewTxOut(int64(vhcutil.Amount(1*count)), pkScript))
 			rec, err := udb.NewTxRecordFromMsgTx(msgTx, epoch)
 			if err != nil {
 				return err
@@ -177,7 +177,7 @@ func setup() error {
 			if err != nil {
 				return errors.Errorf("failed to create pkscript: %s", err)
 			}
-			msgTx.AddTxOut(wire.NewTxOut(int64(dcrutil.Amount(1*count)), pkScript))
+			msgTx.AddTxOut(wire.NewTxOut(int64(vhcutil.Amount(1*count)), pkScript))
 			msgTx.Expiry = wire.NoExpiryValue
 			rec, err := udb.NewTxRecordFromMsgTx(msgTx, epoch)
 			if err != nil {

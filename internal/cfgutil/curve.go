@@ -7,7 +7,7 @@ package cfgutil
 import (
 	"crypto/elliptic"
 
-	"github.com/decred/dcrwallet/errors"
+	"github.com/valhallacoin/vhcwallet/errors"
 )
 
 // CurveID specifies a recognized curve through a constant value.

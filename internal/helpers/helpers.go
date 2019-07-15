@@ -8,14 +8,14 @@
 package helpers
 
 import (
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 // SumOutputValues sums up the list of TxOuts and returns an Amount.
-func SumOutputValues(outputs []*wire.TxOut) (totalOutput dcrutil.Amount) {
+func SumOutputValues(outputs []*wire.TxOut) (totalOutput vhcutil.Amount) {
 	for _, txOut := range outputs {
-		totalOutput += dcrutil.Amount(txOut.Value)
+		totalOutput += vhcutil.Amount(txOut.Value)
 	}
 	return totalOutput
 }

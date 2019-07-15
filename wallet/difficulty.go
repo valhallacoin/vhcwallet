@@ -5,21 +5,21 @@
 
 package wallet
 
-// This code was copied from dcrd/blockchain/difficulty.go and modified for
-// dcrwallet's header storage.
+// This code was copied from vhcd/blockchain/difficulty.go and modified for
+// vhcwallet's header storage.
 
 import (
 	"math/big"
 	"time"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/deployments"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/deployments"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // maxShift is the maximum shift for a difficulty that resets (e.g.
@@ -370,7 +370,7 @@ func (w *Wallet) ancestorHeaderAtHeight(dbtx walletdb.ReadTx, h *wire.BlockHeade
 	case height == int32(h.Height):
 		return h, nil
 	case height > int32(h.Height), height < 0:
-		return nil, nil // dcrd's blockNode.Ancestor returns nil for child heights
+		return nil, nil // vhcd's blockNode.Ancestor returns nil for child heights
 	}
 
 	if len(chain) > 0 && height-int32(chain[0].Header.Height) >= 0 {
@@ -390,7 +390,7 @@ func (w *Wallet) ancestorHeaderAtHeight(dbtx walletdb.ReadTx, h *wire.BlockHeade
 // nextRequiredDCP0001PoSDifficulty calculates the required stake difficulty for
 // the block after the passed previous block node based on the algorithm defined
 // in DCP0001.
-func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeader *wire.BlockHeader, chain []*BlockNode) (dcrutil.Amount, error) {
+func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeader *wire.BlockHeader, chain []*BlockNode) (vhcutil.Amount, error) {
 	// Stake difficulty before any tickets could possibly be purchased is
 	// the minimum value.
 	nextHeight := int64(0)
@@ -399,7 +399,7 @@ func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeade
 	}
 	stakeDiffStartHeight := int64(w.chainParams.CoinbaseMaturity) + 1
 	if nextHeight < stakeDiffStartHeight {
-		return dcrutil.Amount(w.chainParams.MinimumStakeDiff), nil
+		return vhcutil.Amount(w.chainParams.MinimumStakeDiff), nil
 	}
 
 	// Return the previous block's difficulty requirements if the next block
@@ -407,7 +407,7 @@ func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeade
 	intervalSize := w.chainParams.StakeDiffWindowSize
 	curDiff := curHeader.SBits
 	if nextHeight%intervalSize != 0 {
-		return dcrutil.Amount(curDiff), nil
+		return vhcutil.Amount(curDiff), nil
 	}
 
 	// Get the pool size and number of tickets that were immature at the
@@ -437,7 +437,7 @@ func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeade
 	// division by zero and encourage initial pool population.
 	prevPoolSizeAll := prevPoolSize + prevImmatureTickets
 	if prevPoolSizeAll == 0 {
-		return dcrutil.Amount(curDiff), nil
+		return vhcutil.Amount(curDiff), nil
 	}
 
 	// Count the number of currently immature tickets.
@@ -449,7 +449,7 @@ func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeade
 	// Calculate and return the final next required difficulty.
 	curPoolSizeAll := int64(curHeader.PoolSize) + immatureTickets
 	sdiff := calcNextStakeDiffV2(w.chainParams, nextHeight, curDiff, prevPoolSizeAll, curPoolSizeAll)
-	return dcrutil.Amount(sdiff), nil
+	return vhcutil.Amount(sdiff), nil
 }
 
 // NextStakeDifficulty returns the ticket price for the next block after the
@@ -457,9 +457,9 @@ func (w *Wallet) nextRequiredDCP0001PoSDifficulty(dbtx walletdb.ReadTx, curHeade
 // known to be active.  As a fallback, the StakeDifficulty method of
 // wallet.NetworkBackend may be used to query the next ticket price from a
 // trusted full node.
-func (w *Wallet) NextStakeDifficulty() (dcrutil.Amount, error) {
+func (w *Wallet) NextStakeDifficulty() (vhcutil.Amount, error) {
 	const op errors.Op = "wallet.NextStakeDifficulty"
-	var sdiff dcrutil.Amount
+	var sdiff vhcutil.Amount
 	err := walletdb.View(w.db, func(dbtx walletdb.ReadTx) error {
 		ns := dbtx.ReadBucket(wtxmgrNamespaceKey)
 		tipHash, tipHeight := w.TxStore.MainChainTip(ns)
@@ -482,12 +482,12 @@ func (w *Wallet) NextStakeDifficulty() (dcrutil.Amount, error) {
 // NextStakeDifficultyAfterHeader returns the ticket price for the child of h.
 // All headers of ancestor blocks of h must be recorded by the wallet.  This
 // function only suceeds when DCP0001 is known to be active.
-func (w *Wallet) NextStakeDifficultyAfterHeader(h *wire.BlockHeader) (dcrutil.Amount, error) {
+func (w *Wallet) NextStakeDifficultyAfterHeader(h *wire.BlockHeader) (vhcutil.Amount, error) {
 	const op errors.Op = "wallet.NextStakeDifficultyAfterHeader"
 	if !deployments.DCP0001.Active(int32(h.Height), w.chainParams) {
 		return 0, errors.E(op, errors.Deployment, "DCP0001 is not known to be active")
 	}
-	var sdiff dcrutil.Amount
+	var sdiff vhcutil.Amount
 	err := walletdb.View(w.db, func(dbtx walletdb.ReadTx) error {
 		var err error
 		sdiff, err = w.nextRequiredDCP0001PoSDifficulty(dbtx, h, nil)
@@ -560,9 +560,9 @@ func (w *Wallet) validateHeaderChainDifficulties(dbtx walletdb.ReadTx, chain []*
 			if err != nil {
 				return nil, errors.E(op, err)
 			}
-			if dcrutil.Amount(h.SBits) != sdiff {
+			if vhcutil.Amount(h.SBits) != sdiff {
 				err := errors.Errorf("%v has invalid PoS difficulty, got %v, want %v",
-					&hash, dcrutil.Amount(h.SBits), sdiff)
+					&hash, vhcutil.Amount(h.SBits), sdiff)
 				return chain[idx:], errors.E(op, errors.Consensus, err)
 			}
 		}

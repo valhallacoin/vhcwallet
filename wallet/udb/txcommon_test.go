@@ -13,14 +13,14 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/wire"
-	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/wire"
+	_ "github.com/valhallacoin/vhcwallet/wallet/drivers/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 func setup() (db walletdb.DB, s *Store, teardown func(), err error) {
@@ -48,7 +48,7 @@ func setup() (db walletdb.DB, s *Store, teardown func(), err error) {
 	if err != nil {
 		return
 	}
-	acctLookup := func(walletdb.ReadBucket, dcrutil.Address) (uint32, error) { return 0, nil }
+	acctLookup := func(walletdb.ReadBucket, vhcutil.Address) (uint32, error) { return 0, nil }
 	s = &Store{chainParams: &chaincfg.TestNet3Params, acctLookupFunc: acctLookup}
 	return
 }

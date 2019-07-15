@@ -5,20 +5,20 @@
 package wallet
 
 import (
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 )
 
 // StakePoolUserInfo returns the stake pool user information for a user
 // identified by their P2SH voting address.
-func (w *Wallet) StakePoolUserInfo(userAddress dcrutil.Address) (*udb.StakePoolUser, error) {
+func (w *Wallet) StakePoolUserInfo(userAddress vhcutil.Address) (*udb.StakePoolUser, error) {
 	const op errors.Op = "wallet.StakePoolUserInfo"
 
 	switch userAddress.(type) {
-	case *dcrutil.AddressPubKeyHash: // ok
-	case *dcrutil.AddressScriptHash: // ok
+	case *vhcutil.AddressPubKeyHash: // ok
+	case *vhcutil.AddressScriptHash: // ok
 	default:
 		return nil, errors.E(op, errors.Invalid, "address must be P2PKH or P2SH")
 	}

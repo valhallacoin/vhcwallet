@@ -1,5 +1,5 @@
-module github.com/decred/dcrwallet/pgpwordlist
+module github.com/valhallacoin/vhcwallet/pgpwordlist
 
-require github.com/decred/dcrwallet/errors v1.0.0
+require github.com/valhallacoin/vhcwallet/errors v1.0.0
 
-replace github.com/decred/dcrwallet/errors v1.0.0 => ../errors
+replace github.com/valhallacoin/vhcwallet/errors v1.0.0 => ../errors

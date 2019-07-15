@@ -7,16 +7,16 @@ package udb
 import (
 	"crypto/sha256"
 
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/internal/snacl"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/internal/snacl"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // Note: all manager functions always use the latest version of the database.
@@ -62,7 +62,7 @@ const (
 	// slip0044CoinTypeVersion is the seventh version of the database.  It
 	// introduces the possibility of the BIP0044 coin type key being either the
 	// legacy coin type used by earlier versions of the wallet, or the coin type
-	// assigned to Decred in SLIP0044.  The upgrade does not add or remove any
+	// assigned to Valhalla in SLIP0044.  The upgrade does not add or remove any
 	// required keys (the upgrade is done in a backwards-compatible way) but the
 	// database version is bumped to prevent older software from assuming that
 	// coin type 20 exists (the upgrade is not forwards-compatible).
@@ -82,7 +82,7 @@ const (
 	hasExpiryFixedVersion = 9
 
 	// cfVersion is the tenth version of the database.  It adds a bucket to
-	// store compact filters, which are required for Decred's SPV
+	// store compact filters, which are required for Valhalla's SPV
 	// implementation, and a txmgr namespace root key which tracks whether all
 	// main chain compact filters were saved.  This version does not begin to
 	// save compact filter headers, since the SPV implementation is expected to
@@ -216,7 +216,7 @@ func lastUsedAddressIndexUpgrade(tx walletdb.ReadWriteTx, publicPassphrase []byt
 				return err
 			}
 			// This can't error because the function always passes good input to
-			// dcrutil.NewAddressPubKeyHash.  Also, while it looks like a
+			// vhcutil.NewAddressPubKeyHash.  Also, while it looks like a
 			// mistake to hardcode the mainnet parameters here, it doesn't make
 			// any difference since only the pubkey hash is used.  (Why is there
 			// no exported method to just return the serialized public key?)

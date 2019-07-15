@@ -11,18 +11,18 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs/blockcf"
-	hd "github.com/decred/dcrd/hdkeychain"
-	rpc "github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/validate"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	hd "github.com/valhallacoin/vhcd/hdkeychain"
+	rpc "github.com/valhallacoin/vhcd/rpcclient"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/validate"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 	"github.com/jrick/bitset"
 	"golang.org/x/sync/errgroup"
 )
@@ -542,14 +542,14 @@ func (w *Wallet) findLastUsedAccount(ctx context.Context, p Peer, blockCache blo
 }
 
 // existsAddrIndexFinder implements address and account discovery using the
-// exists address index of a trusted dcrd RPC server.
+// exists address index of a trusted vhcd RPC server.
 type existsAddrIndexFinder struct {
 	wallet *Wallet
 	client *rpc.Client
 }
 
-func (f *existsAddrIndexFinder) addressesUsed(addrs []dcrutil.Address) (bitset.Bytes, error) {
-	const op errors.Op = "dcrd.jsonrpc.existsaddresses"
+func (f *existsAddrIndexFinder) addressesUsed(addrs []vhcutil.Address) (bitset.Bytes, error) {
+	const op errors.Op = "vhcd.jsonrpc.existsaddresses"
 
 	hexBitSet, err := f.client.ExistsAddresses(addrs)
 	if err != nil {

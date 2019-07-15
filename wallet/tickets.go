@@ -9,15 +9,15 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	dcrrpcclient "github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 	"github.com/jrick/bitset"
 	"golang.org/x/sync/errgroup"
 )
@@ -55,7 +55,7 @@ func (w *Wallet) GenerateVoteTx(blockHash *chainhash.Hash, height int32, ticketH
 
 // LiveTicketHashes returns the hashes of live tickets that the wallet has
 // purchased or has voting authority for.
-func (w *Wallet) LiveTicketHashes(chainClient *dcrrpcclient.Client, includeImmature bool) ([]chainhash.Hash, error) {
+func (w *Wallet) LiveTicketHashes(chainClient *vhcrpcclient.Client, includeImmature bool) ([]chainhash.Hash, error) {
 	const op errors.Op = "wallet.LiveTicketHashes"
 
 	var ticketHashes []chainhash.Hash
@@ -113,9 +113,9 @@ func (w *Wallet) LiveTicketHashes(chainClient *dcrrpcclient.Client, includeImmat
 	}
 
 	// Determine if the extra tickets are immature or possibly live.  Because
-	// these transactions are not part of the wallet's transaction history, dcrd
+	// these transactions are not part of the wallet's transaction history, vhcd
 	// must be queried for their blockchain height.  This functionality requires
-	// the dcrd transaction index to be enabled.
+	// the vhcd transaction index to be enabled.
 	var g errgroup.Group
 	type extraTicketResult struct {
 		valid  bool // unspent with known height
@@ -188,7 +188,7 @@ func (w *Wallet) LiveTicketHashes(chainClient *dcrrpcclient.Client, includeImmat
 // TicketHashesForVotingAddress returns the hashes of all tickets with voting
 // rights delegated to votingAddr.  This function does not return the hashes of
 // pruned tickets.
-func (w *Wallet) TicketHashesForVotingAddress(votingAddr dcrutil.Address) ([]chainhash.Hash, error) {
+func (w *Wallet) TicketHashesForVotingAddress(votingAddr vhcutil.Address) ([]chainhash.Hash, error) {
 	const op errors.Op = "wallet.TicketHashesForVotingAddress"
 
 	var ticketHashes []chainhash.Hash
@@ -235,7 +235,7 @@ func (w *Wallet) AddTicket(ticket *wire.MsgTx) error {
 		stakemgrNs := tx.ReadWriteBucket(wstakemgrNamespaceKey)
 
 		// Insert the ticket to be tracked and voted.
-		err := w.StakeMgr.InsertSStx(stakemgrNs, dcrutil.NewTx(ticket))
+		err := w.StakeMgr.InsertSStx(stakemgrNs, vhcutil.NewTx(ticket))
 		if err != nil {
 			return err
 		}
@@ -279,7 +279,7 @@ func (w *Wallet) AddTicket(ticket *wire.MsgTx) error {
 // RevokeTickets creates and sends revocation transactions for any unrevoked
 // missed and expired tickets.  The wallet must be unlocked to generate any
 // revocations.
-func (w *Wallet) RevokeTickets(chainClient *dcrrpcclient.Client) error {
+func (w *Wallet) RevokeTickets(chainClient *vhcrpcclient.Client) error {
 	const op errors.Op = "wallet.RevokeTickets"
 
 	var ticketHashes []chainhash.Hash

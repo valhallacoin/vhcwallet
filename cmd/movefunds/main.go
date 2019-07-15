@@ -26,11 +26,11 @@ import (
 	"os"
 	"sort"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 // params is the global representing the chain parameters. It is assigned
@@ -42,7 +42,7 @@ type configJSON struct {
 	TxFee         int64  `json:"txfee"`
 	SendToAddress string `json:"sendtoaddress"`
 	Network       string `json:"network"`
-	DcrctlArgs    string `json:"dcrctlargs"`
+	VhcctlArgs    string `json:"vhcctlargs"`
 }
 
 // extendedOutPoint is a UTXO with an amount.
@@ -68,7 +68,7 @@ func (e extendedOutPoints) Swap(i, j int) {
 // convertJSONUnspentToOutPoints converts a JSON raw dump from listunspent to
 // a set of UTXOs.
 func convertJSONUnspentToOutPoints(
-	utxos []dcrjson.ListUnspentResult) []*extendedOutPoint {
+	utxos []vhcjson.ListUnspentResult) []*extendedOutPoint {
 	var eops []*extendedOutPoint
 	for _, utxo := range utxos {
 		if utxo.TxType == 1 && utxo.Vout == 0 {
@@ -89,7 +89,7 @@ func convertJSONUnspentToOutPoints(
 
 		eop := new(extendedOutPoint)
 		eop.op = op
-		amtCast, _ := dcrutil.NewAmount(utxo.Amount)
+		amtCast, _ := vhcutil.NewAmount(utxo.Amount)
 		eop.amt = int64(amtCast)
 		eop.pkScript = pks
 
@@ -106,7 +106,7 @@ func main() {
 		fmt.Println("error opening unspent file unspent.json", err.Error())
 	}
 
-	var utxos []dcrjson.ListUnspentResult
+	var utxos []vhcjson.ListUnspentResult
 
 	jsonParser := json.NewDecoder(unspentFile)
 	if err = jsonParser.Decode(&utxos); err != nil {
@@ -145,7 +145,7 @@ func main() {
 
 	maxTxSize = params.MaxTxSize
 
-	sendToAddress, err := dcrutil.DecodeAddress(cfg.SendToAddress)
+	sendToAddress, err := vhcutil.DecodeAddress(cfg.SendToAddress)
 	if err != nil {
 		fmt.Println("Failed to parse tx address: ", err.Error())
 	}
@@ -185,8 +185,8 @@ func main() {
 
 	// The command to sign the transaction.
 	var buf bytes.Buffer
-	buf.WriteString("dcrctl ")
-	buf.WriteString(cfg.DcrctlArgs)
+	buf.WriteString("vhcctl ")
+	buf.WriteString(cfg.VhcctlArgs)
 	buf.WriteString(" signrawtransaction ")
 	buf.WriteString(hex.EncodeToString(txB))
 	buf.WriteString(" '[")

@@ -68,7 +68,7 @@ const (
 	Consensus                       // Consensus violation
 	DoubleSpend                     // Transaction is a double spend
 	Protocol                        // Protocol violation
-	NoPeers                         // Decred network is unreachable due to lack of peers or dcrd RPC connections
+	NoPeers                         // Valhalla network is unreachable due to lack of peers or vhcd RPC connections
 	Deployment                      // Inactive consensus deployment
 )
 
@@ -113,7 +113,7 @@ func (k Kind) String() string {
 	case Protocol:
 		return "protocol violation"
 	case NoPeers:
-		return "Decred network is unreachable"
+		return "Valhalla network is unreachable"
 	case Deployment:
 		return "inactive deployment"
 	default:

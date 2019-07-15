@@ -6,12 +6,12 @@
 package udb
 
 import (
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // CreditRecord contains metadata regarding a transaction credit for a known
@@ -19,7 +19,7 @@ import (
 // with the Index field.
 type CreditRecord struct {
 	Index      uint32
-	Amount     dcrutil.Amount
+	Amount     vhcutil.Amount
 	Spent      bool
 	Change     bool
 	OpCode     uint8
@@ -31,7 +31,7 @@ type CreditRecord struct {
 // transaction.  Further details may be looked up by indexing a wire.MsgTx.TxIn
 // with the Index field.
 type DebitRecord struct {
-	Amount dcrutil.Amount
+	Amount vhcutil.Amount
 	Index  uint32
 }
 
@@ -475,7 +475,7 @@ func (s *Store) rangeBlockTransactions(ns walletdb.ReadBucket, begin, end int32,
 			details = append(details, detail)
 		}
 
-		// Decred: Block records are saved even when no transactions are
+		// Valhalla: Block records are saved even when no transactions are
 		// included.  This is used to save the votebits from every
 		// block.  This differs from btcwallet where every block must
 		// have one transaction.  Since f may only be called when

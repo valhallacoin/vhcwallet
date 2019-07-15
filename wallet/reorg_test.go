@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/decred/dcrd/blockchain/chaingen"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/blockchain/chaingen"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 type tg struct {

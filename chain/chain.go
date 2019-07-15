@@ -11,20 +11,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	dcrrpcclient "github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
 )
 
 var requiredChainServerAPI = semver{major: 5, minor: 0, patch: 0}
 
-// RPCClient represents a persistent client connection to a decred RPC server
+// RPCClient represents a persistent client connection to a valhallacoin RPC server
 // for information regarding the current best block chain.
 type RPCClient struct {
-	*dcrrpcclient.Client
-	connConfig  *dcrrpcclient.ConnConfig // Work around unexported field
+	*vhcrpcclient.Client
+	connConfig  *vhcrpcclient.ConnConfig // Work around unexported field
 	chainParams *chaincfg.Params
 
 	enqueueNotification       chan interface{}
@@ -42,12 +42,12 @@ type RPCClient struct {
 // connect string.  If disableTLS is false, the remote RPC certificate must be
 // provided in the certs slice.  The connection is not established immediately,
 // but must be done using the Start method.  If the remote server does not
-// operate on the same decred network as described by the passed chain
+// operate on the same valhallacoin network as described by the passed chain
 // parameters, the connection will be disconnected.
 // Deprecated: use NewRPCClientConfig
 func NewRPCClient(chainParams *chaincfg.Params, connect, user, pass string, certs []byte,
 	disableTLS bool) (*RPCClient, error) {
-	return NewRPCClientConfig(chainParams, &dcrrpcclient.ConnConfig{
+	return NewRPCClientConfig(chainParams, &vhcrpcclient.ConnConfig{
 		Host:                 connect,
 		Endpoint:             "ws",
 		User:                 user,
@@ -61,7 +61,7 @@ func NewRPCClient(chainParams *chaincfg.Params, connect, user, pass string, cert
 
 // NewRPCClientConfig creates a client connection to the server described by the
 // passed chainParams and connConfig
-func NewRPCClientConfig(chainParams *chaincfg.Params, connConfig *dcrrpcclient.ConnConfig) (*RPCClient, error) {
+func NewRPCClientConfig(chainParams *chaincfg.Params, connConfig *vhcrpcclient.ConnConfig) (*RPCClient, error) {
 	client := &RPCClient{
 		connConfig:                connConfig,
 		chainParams:               chainParams,
@@ -71,7 +71,7 @@ func NewRPCClientConfig(chainParams *chaincfg.Params, connConfig *dcrrpcclient.C
 		dequeueVotingNotification: make(chan interface{}),
 		quit:                      make(chan struct{}),
 	}
-	ntfnCallbacks := &dcrrpcclient.NotificationHandlers{
+	ntfnCallbacks := &vhcrpcclient.NotificationHandlers{
 		OnBlockConnected:        client.onBlockConnected,
 		OnBlockDisconnected:     client.onBlockDisconnected,
 		OnRelevantTxAccepted:    client.onRelevantTxAccepted,
@@ -80,7 +80,7 @@ func NewRPCClientConfig(chainParams *chaincfg.Params, connConfig *dcrrpcclient.C
 		OnSpentAndMissedTickets: client.onSpentAndMissedTickets,
 		OnStakeDifficulty:       client.onStakeDifficulty,
 	}
-	rpcClient, err := dcrrpcclient.New(client.connConfig, ntfnCallbacks)
+	rpcClient, err := vhcrpcclient.New(client.connConfig, ntfnCallbacks)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func (c *RPCClient) Start(ctx context.Context, retry bool) (err error) {
 	// Verify that the server is running on the expected network.
 	net, err := c.Client.GetCurrentNet()
 	if err != nil {
-		return errors.E(op, errors.E(errors.Op("dcrd.jsonrpc.getcurrentnet"), err))
+		return errors.E(op, errors.E(errors.Op("vhcd.jsonrpc.getcurrentnet"), err))
 	}
 	if net != c.chainParams.Net {
 		return errors.E(op, "mismatched networks")
@@ -120,7 +120,7 @@ func (c *RPCClient) Start(ctx context.Context, retry bool) (err error) {
 	var serverAPI semver
 	versions, err := c.Client.Version()
 	if err == nil {
-		versionResult := versions["dcrdjsonrpcapi"]
+		versionResult := versions["vhcdjsonrpcapi"]
 		serverAPI = semver{
 			major: versionResult.Major,
 			minor: versionResult.Minor,
@@ -169,7 +169,7 @@ func (c *RPCClient) WaitForShutdown() {
 
 // Notification types.  These are defined here and processed from from reading
 // a notificationChan to avoid handling these notifications directly in
-// dcrrpcclient callbacks, which isn't very Go-like and doesn't allow
+// vhcrpcclient callbacks, which isn't very Go-like and doesn't allow
 // blocking client calls.
 type (
 	// blockConnected is a notification for a newly-attached block to the
@@ -224,7 +224,7 @@ type (
 )
 
 // notifications returns a channel of parsed notifications sent by the remote
-// decred RPC server.  This channel must be continually read or the process
+// valhallacoin RPC server.  This channel must be continually read or the process
 // may abort for running out memory, as unread notifications are queued for
 // later reads.
 func (c *RPCClient) notifications() <-chan interface{} {
@@ -406,7 +406,7 @@ out:
 			//
 			// TODO: A minute timeout is used to prevent the handler loop from
 			// blocking here forever, but this is much larger than it needs to
-			// be due to dcrd processing websocket requests synchronously (see
+			// be due to vhcd processing websocket requests synchronously (see
 			// https://github.com/btcsuite/btcd/issues/504).  Decrease this to
 			// something saner like 3s when the above issue is fixed.
 			type sessionResult struct {
@@ -495,11 +495,11 @@ out:
 	c.wg.Done()
 }
 
-// POSTClient creates the equivalent HTTP POST dcrrpcclient.Client.
-func (c *RPCClient) POSTClient() (*dcrrpcclient.Client, error) {
+// POSTClient creates the equivalent HTTP POST vhcrpcclient.Client.
+func (c *RPCClient) POSTClient() (*vhcrpcclient.Client, error) {
 	configCopy := *c.connConfig
 	configCopy.HTTPPostMode = true
-	client, err := dcrrpcclient.New(&configCopy, nil)
+	client, err := vhcrpcclient.New(&configCopy, nil)
 	if err != nil {
 		return nil, errors.E(errors.Op("chain.POSTClient"), err)
 	}

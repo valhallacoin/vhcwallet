@@ -19,22 +19,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainec"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrec/secp256k1"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrutil"
-	"github.com/decred/dcrutil/hdkeychain"
-	"github.com/decred/dcrwallet/wallet/internal/txsizes"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	_ "github.com/decred/dcrwallet/wallet/internal/bdb"
-	"github.com/decred/dcrwallet/wallet/txrules"
-	"github.com/decred/dcrwallet/wallet/udb"
-	"github.com/decred/dcrwallet/walletseed"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainec"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcec/secp256k1"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcutil"
+	"github.com/valhallacoin/vhcutil/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/wallet/internal/txsizes"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	_ "github.com/valhallacoin/vhcwallet/wallet/internal/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/txrules"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
+	"github.com/valhallacoin/vhcwallet/walletseed"
 )
 
 const dbname = "v5.db"
@@ -43,7 +43,7 @@ var (
 	pubPass  = []byte("public")
 	privPass = []byte("private")
 	privKey  = []byte{31: 1}
-	addr     dcrutil.Address
+	addr     vhcutil.Address
 )
 
 var chainParams = &chaincfg.TestNet2Params
@@ -100,7 +100,7 @@ func setup() error {
 		}
 
 		privKey, _ := secp256k1.PrivKeyFromBytes(secp256k1.S256(), privKey)
-		wif, err := dcrutil.NewWIF(privKey, chainParams, chainec.ECTypeSecp256k1)
+		wif, err := vhcutil.NewWIF(privKey, chainParams, chainec.ECTypeSecp256k1)
 		if err != nil {
 			return err
 		}
@@ -261,7 +261,7 @@ func compress() error {
 }
 
 func createUnsignedTicketPurchase(prevOut *wire.OutPoint,
-	inputAmount, ticketPrice dcrutil.Amount) (*wire.MsgTx, error) {
+	inputAmount, ticketPrice vhcutil.Amount) (*wire.MsgTx, error) {
 
 	tx := wire.NewMsgTx()
 	txIn := wire.NewTxIn(prevOut, nil)
@@ -282,7 +282,7 @@ func createUnsignedTicketPurchase(prevOut *wire.OutPoint,
 	}
 
 	pkScript, err = txscript.GenerateSStxAddrPush(addr,
-		dcrutil.Amount(amountsCommitted[0]), ticketFeeLimits)
+		vhcutil.Amount(amountsCommitted[0]), ticketFeeLimits)
 	if err != nil {
 		return nil, err
 	}
@@ -376,7 +376,7 @@ func createUnsignedVote(ticketHash *chainhash.Hash, ticketPurchase *wire.MsgTx,
 // revokes a missed or expired ticket.  Revocations must carry a relay fee and
 // this function can error if the revocation contains no suitable output to
 // decrease the estimated relay fee from.
-func createUnsignedRevocation(ticketHash *chainhash.Hash, ticketPurchase *wire.MsgTx, feePerKB dcrutil.Amount) (*wire.MsgTx, error) {
+func createUnsignedRevocation(ticketHash *chainhash.Hash, ticketPurchase *wire.MsgTx, feePerKB vhcutil.Amount) (*wire.MsgTx, error) {
 	// Parse the ticket purchase transaction to determine the required output
 	// destinations for vote rewards or revocations.
 	ticketPayKinds, ticketHash160s, ticketValues, _, _, _ :=
@@ -421,8 +421,8 @@ func createUnsignedRevocation(ticketHash *chainhash.Hash, ticketPurchase *wire.M
 	// code does not currently handle reducing the output values of multiple
 	// commitment outputs to accomodate for the fee.
 	for _, output := range revocation.TxOut {
-		if dcrutil.Amount(output.Value) > feeEstimate {
-			amount := dcrutil.Amount(output.Value) - feeEstimate
+		if vhcutil.Amount(output.Value) > feeEstimate {
+			amount := vhcutil.Amount(output.Value) - feeEstimate
 			if !txrules.IsDustAmount(amount, len(output.PkScript), feePerKB) {
 				output.Value = int64(amount)
 				return revocation, nil

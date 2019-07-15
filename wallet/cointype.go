@@ -5,14 +5,14 @@
 package wallet
 
 import (
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 )
 
 // UpgradeToSLIP0044CoinType upgrades the wallet from the legacy BIP0044 coin
-// type to one of the coin types assigned to Decred in SLIP0044.  This should be
+// type to one of the coin types assigned to Valhalla in SLIP0044.  This should be
 // called after a new wallet is created with a random (not imported) seed.
 //
 // This function does not register addresses from the new account 0 with the

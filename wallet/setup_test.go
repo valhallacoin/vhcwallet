@@ -9,21 +9,21 @@ import (
 	"os"
 	"testing"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/dcrutil"
-	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	_ "github.com/valhallacoin/vhcwallet/wallet/drivers/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 var basicWalletConfig = Config{
 	PubPassphrase: []byte(InsecurePubPassphrase),
 	GapLimit:      20,
-	RelayFee:      dcrutil.Amount(1e5).ToCoin(),
+	RelayFee:      vhcutil.Amount(1e5).ToCoin(),
 	Params:        &chaincfg.SimNetParams,
 }
 
 func testWallet(t *testing.T, cfg *Config) (w *Wallet, teardown func()) {
-	f, err := ioutil.TempFile("", "dcrwallet.testdb")
+	f, err := ioutil.TempFile("", "vhcwallet.testdb")
 	if err != nil {
 		t.Fatal(err)
 	}

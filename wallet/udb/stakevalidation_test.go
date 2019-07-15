@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	_ "github.com/decred/dcrwallet/wallet/internal/bdb"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	_ "github.com/valhallacoin/vhcwallet/wallet/internal/bdb"
 )
 
 func insertMainChainHeaders(s *Store, ns walletdb.ReadWriteBucket, addrmgrNs walletdb.ReadBucket,
@@ -43,8 +43,8 @@ func TestStakeInvalidationOfTip(t *testing.T) {
 	}
 
 	g := makeBlockGenerator()
-	block1Header := g.generate(dcrutil.BlockValid)
-	block2Header := g.generate(dcrutil.BlockValid)
+	block1Header := g.generate(vhcutil.BlockValid)
+	block2Header := g.generate(vhcutil.BlockValid)
 	block3Header := g.generate(0)
 
 	block1Tx := wire.MsgTx{
@@ -115,8 +115,8 @@ func TestStakeInvalidationOfTip(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if bal.Total != dcrutil.Amount(block2Tx.TxOut[0].Value) {
-			t.Errorf("Wrong balance: expected %v got %v", dcrutil.Amount(block2Tx.TxOut[0].Value), bal)
+		if bal.Total != vhcutil.Amount(block2Tx.TxOut[0].Value) {
+			t.Errorf("Wrong balance: expected %v got %v", vhcutil.Amount(block2Tx.TxOut[0].Value), bal)
 		}
 		credits, err := s.UnspentOutputs(ns)
 		if err != nil {
@@ -130,7 +130,7 @@ func TestStakeInvalidationOfTip(t *testing.T) {
 			t.Errorf("Credit hash does match tx from block 2")
 			return nil
 		}
-		if credits[0].Amount != dcrutil.Amount(block2Tx.TxOut[0].Value) {
+		if credits[0].Amount != vhcutil.Amount(block2Tx.TxOut[0].Value) {
 			t.Errorf("Credit value does not match tx output 0 from block 2")
 			return nil
 		}
@@ -158,8 +158,8 @@ func TestStakeInvalidationOfTip(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if bal.Total != dcrutil.Amount(block1Tx.TxOut[0].Value) {
-			t.Errorf("Wrong balance: expected %v got %v", dcrutil.Amount(block1Tx.TxOut[0].Value), bal)
+		if bal.Total != vhcutil.Amount(block1Tx.TxOut[0].Value) {
+			t.Errorf("Wrong balance: expected %v got %v", vhcutil.Amount(block1Tx.TxOut[0].Value), bal)
 		}
 		credits, err = s.UnspentOutputs(ns)
 		if err != nil {
@@ -173,7 +173,7 @@ func TestStakeInvalidationOfTip(t *testing.T) {
 			t.Errorf("Credit hash does not match tx from block 1")
 			return nil
 		}
-		if credits[0].Amount != dcrutil.Amount(block1Tx.TxOut[0].Value) {
+		if credits[0].Amount != vhcutil.Amount(block1Tx.TxOut[0].Value) {
 			t.Errorf("Credit value does not match tx output 0 from block 1")
 			return nil
 		}
@@ -193,8 +193,8 @@ func TestStakeInvalidationTxInsert(t *testing.T) {
 	}
 
 	g := makeBlockGenerator()
-	block1Header := g.generate(dcrutil.BlockValid)
-	block2Header := g.generate(dcrutil.BlockValid)
+	block1Header := g.generate(vhcutil.BlockValid)
+	block2Header := g.generate(vhcutil.BlockValid)
 	block3Header := g.generate(0)
 
 	block1Tx := wire.MsgTx{
@@ -249,15 +249,15 @@ func TestStakeInvalidationTxInsert(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if bal.Total != dcrutil.Amount(block1Tx.TxOut[0].Value) {
-			t.Errorf("Wrong balance: expected %v got %v", dcrutil.Amount(block1Tx.TxOut[0].Value), bal)
+		if bal.Total != vhcutil.Amount(block1Tx.TxOut[0].Value) {
+			t.Errorf("Wrong balance: expected %v got %v", vhcutil.Amount(block1Tx.TxOut[0].Value), bal)
 		}
 		bal, err = s.AccountBalance(ns, addrmgrNs, 1, 0)
 		if err != nil {
 			return err
 		}
-		if bal.Total != dcrutil.Amount(block1Tx.TxOut[0].Value) {
-			t.Errorf("Wrong balance: expected %v got %v", dcrutil.Amount(block1Tx.TxOut[0].Value), bal)
+		if bal.Total != vhcutil.Amount(block1Tx.TxOut[0].Value) {
+			t.Errorf("Wrong balance: expected %v got %v", vhcutil.Amount(block1Tx.TxOut[0].Value), bal)
 		}
 		credits, err := s.UnspentOutputs(ns)
 		if err != nil {
@@ -271,7 +271,7 @@ func TestStakeInvalidationTxInsert(t *testing.T) {
 			t.Errorf("Credit hash does not match tx from block 1")
 			return nil
 		}
-		if credits[0].Amount != dcrutil.Amount(block1Tx.TxOut[0].Value) {
+		if credits[0].Amount != vhcutil.Amount(block1Tx.TxOut[0].Value) {
 			t.Errorf("Credit value does not match tx output 0 from block 1")
 			return nil
 		}

@@ -5,16 +5,16 @@
 
 package cfgutil
 
-import "github.com/decred/dcrd/dcrutil"
+import "github.com/valhallacoin/vhcd/vhcutil"
 
-// AddressFlag contains a dcrutil.Address and implements the flags.Marshaler and
+// AddressFlag contains a vhcutil.Address and implements the flags.Marshaler and
 // Unmarshaler interfaces so it can be used as a config struct field.
 type AddressFlag struct {
-	Address dcrutil.Address
+	Address vhcutil.Address
 }
 
-// NewAddressFlag creates an AddressFlag with a default dcrutil.Address.
-func NewAddressFlag(defaultValue dcrutil.Address) *AddressFlag {
+// NewAddressFlag creates an AddressFlag with a default vhcutil.Address.
+func NewAddressFlag(defaultValue vhcutil.Address) *AddressFlag {
 	return &AddressFlag{defaultValue}
 }
 
@@ -33,7 +33,7 @@ func (a *AddressFlag) UnmarshalFlag(addr string) error {
 		a.Address = nil
 		return nil
 	}
-	address, err := dcrutil.DecodeAddress(addr)
+	address, err := vhcutil.DecodeAddress(addr)
 	if err != nil {
 		return err
 	}

@@ -19,8 +19,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrwallet/internal/rpchelp"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcwallet/internal/rpchelp"
 )
 
 func serverMethods() map[string]struct{} {
@@ -55,7 +55,7 @@ func TestRPCMethodHelpGeneration(t *testing.T) {
 		for _, m := range rpchelp.Methods {
 			delete(svrMethods, m.Method)
 
-			helpText, err := dcrjson.GenerateHelp(m.Method, rpchelp.HelpDescs[i].Descs, m.ResultTypes...)
+			helpText, err := vhcjson.GenerateHelp(m.Method, rpchelp.HelpDescs[i].Descs, m.ResultTypes...)
 			if err != nil {
 				t.Errorf("Cannot generate '%s' help for method '%s': missing description for '%s'",
 					locale, m.Method, err)
@@ -92,7 +92,7 @@ func TestRPCMethodUsageGeneration(t *testing.T) {
 	for _, m := range rpchelp.Methods {
 		delete(svrMethods, m.Method)
 
-		usage, err := dcrjson.MethodUsageText(m.Method)
+		usage, err := vhcjson.MethodUsageText(m.Method)
 		if err != nil {
 			t.Errorf("Cannot generate single line usage for method '%s': %v",
 				m.Method, err)

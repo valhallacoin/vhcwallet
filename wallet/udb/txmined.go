@@ -12,19 +12,19 @@ import (
 	"sort"
 	"time"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/internal/txsizes"
-	"github.com/decred/dcrwallet/wallet/txauthor"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/internal/txsizes"
+	"github.com/valhallacoin/vhcwallet/wallet/txauthor"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -75,7 +75,7 @@ type indexedIncidence struct {
 type credit struct {
 	outPoint   wire.OutPoint
 	block      Block
-	amount     dcrutil.Amount
+	amount     vhcutil.Amount
 	change     bool
 	spentBy    indexedIncidence // Index == ^uint32(0) if unspent
 	opCode     uint8
@@ -141,7 +141,7 @@ type MultisigOut struct {
 	TxHash       chainhash.Hash
 	BlockHash    chainhash.Hash
 	BlockHeight  uint32
-	Amount       dcrutil.Amount
+	Amount       vhcutil.Amount
 	Spent        bool
 	SpentBy      chainhash.Hash
 	SpentByIndex uint32
@@ -153,7 +153,7 @@ type MultisigOut struct {
 type Credit struct {
 	wire.OutPoint
 	BlockMeta
-	Amount       dcrutil.Amount
+	Amount       vhcutil.Amount
 	PkScript     []byte
 	Received     time.Time
 	FromCoinBase bool
@@ -164,7 +164,7 @@ type Credit struct {
 // transactions.
 type Store struct {
 	chainParams    *chaincfg.Params
-	acctLookupFunc func(walletdb.ReadBucket, dcrutil.Address) (uint32, error)
+	acctLookupFunc func(walletdb.ReadBucket, vhcutil.Address) (uint32, error)
 }
 
 // MainChainTip returns the hash and height of the currently marked tip-most
@@ -398,7 +398,7 @@ func (s *Store) InsertMissingCFilters(dbtx walletdb.ReadWriteTx, blockHashes []*
 	return nil
 }
 
-// BlockCFilter is a compact filter for a Decred block.
+// BlockCFilter is a compact filter for a Valhalla block.
 type BlockCFilter struct {
 	BlockHash chainhash.Hash
 	Filter    *gcs.Filter
@@ -602,7 +602,7 @@ func stakeValidate(ns walletdb.ReadWriteBucket, height int32) error {
 				return err
 			}
 
-			minedBalance += dcrutil.Amount(output.Value)
+			minedBalance += vhcutil.Amount(output.Value)
 		}
 
 		// Move all debits from this tx to the non-invalidated debits bucket,
@@ -737,7 +737,7 @@ func stakeInvalidate(ns walletdb.ReadWriteBucket, height int32) error {
 				return err
 			}
 
-			minedBalance -= dcrutil.Amount(output.Value)
+			minedBalance -= vhcutil.Amount(output.Value)
 		}
 
 		// Move all debits from this tx to the invalidated debits bucket, and
@@ -1291,7 +1291,7 @@ func (s *Store) AddCredit(ns walletdb.ReadWriteBucket, rec *TxRecord, block *Blo
 				Index: index,
 			},
 			block:      block.Block,
-			amount:     dcrutil.Amount(rec.MsgTx.TxOut[index].Value),
+			amount:     vhcutil.Amount(rec.MsgTx.TxOut[index].Value),
 			change:     change,
 			spentBy:    indexedIncidence{index: ^uint32(0)},
 			opCode:     getP2PKHOpCode(pkScript),
@@ -1390,7 +1390,7 @@ func (s *Store) addCredit(ns walletdb.ReadWriteBucket, rec *TxRecord, block *Blo
 		scrLoc := pkScrLocs[index]
 		scrLen := len(rec.MsgTx.TxOut[index].PkScript)
 
-		v := valueUnminedCredit(dcrutil.Amount(rec.MsgTx.TxOut[index].Value),
+		v := valueUnminedCredit(vhcutil.Amount(rec.MsgTx.TxOut[index].Value),
 			change, opCode, isCoinbase, hasExpiry, scrType, uint32(scrLoc),
 			uint32(scrLen), account, DBVersion)
 		return true, putRawUnminedCredit(ns, k, v)
@@ -1401,7 +1401,7 @@ func (s *Store) addCredit(ns walletdb.ReadWriteBucket, rec *TxRecord, block *Blo
 		return false, nil
 	}
 
-	txOutAmt := dcrutil.Amount(rec.MsgTx.TxOut[index].Value)
+	txOutAmt := vhcutil.Amount(rec.MsgTx.TxOut[index].Value)
 	log.Debugf("Marking transaction %v output %d (%v) spendable",
 		rec.Hash, index, txOutAmt)
 
@@ -1530,7 +1530,7 @@ func (s *Store) AddMultisigOut(ns walletdb.ReadWriteBucket, rec *TxRecord, block
 		tree,
 		block.Block.Hash,
 		uint32(block.Block.Height),
-		dcrutil.Amount(rec.MsgTx.TxOut[index].Value),
+		vhcutil.Amount(rec.MsgTx.TxOut[index].Value),
 		*empty,     // Unspent
 		0xFFFFFFFF, // Unspent
 		rec.Hash)
@@ -1586,7 +1586,7 @@ func (s *Store) Rollback(ns walletdb.ReadWriteBucket, addrmgrNs walletdb.ReadBuc
 }
 
 func approvesParent(voteBits uint16) bool {
-	return dcrutil.IsFlagSet16(voteBits, dcrutil.BlockValid)
+	return vhcutil.IsFlagSet16(voteBits, vhcutil.BlockValid)
 }
 
 // Note: does not stake validate the parent block at height-1.  Assumes the
@@ -1667,7 +1667,7 @@ func (s *Store) rollback(ns walletdb.ReadWriteBucket, addrmgrNs walletdb.ReadBuc
 					outPointKey := canonicalOutPoint(&rec.Hash, uint32(i))
 					credKey := existsRawUnspent(ns, outPointKey)
 					if credKey != nil {
-						minedBalance -= dcrutil.Amount(output.Value)
+						minedBalance -= vhcutil.Amount(output.Value)
 						err = deleteRawUnspent(ns, outPointKey)
 						if err != nil {
 							return err
@@ -1753,7 +1753,7 @@ func (s *Store) rollback(ns walletdb.ReadWriteBucket, addrmgrNs walletdb.ReadBuc
 				// (transactions in the blo	ck record are not sorted by
 				// appearence in the block), this credit may have already been
 				// removed.
-				var amt dcrutil.Amount
+				var amt vhcutil.Amount
 				amt, err = unspendRawCredit(ns, credKey)
 				if err != nil {
 					return err
@@ -1857,7 +1857,7 @@ func (s *Store) rollback(ns walletdb.ReadWriteBucket, addrmgrNs walletdb.ReadBuc
 					// correcting the balance.
 					isTicketOutput := (txType == stake.TxTypeSStx && i == 0)
 					if !isTicketOutput {
-						minedBalance -= dcrutil.Amount(output.Value)
+						minedBalance -= vhcutil.Amount(output.Value)
 					}
 					err = deleteRawUnspent(ns, outPointKey)
 					if err != nil {
@@ -1964,7 +1964,7 @@ func (s *Store) outputCreditInfo(ns walletdb.ReadBucket, op wire.OutPoint, block
 		return nil, errors.E(errors.IO, errors.Errorf("inconsistency: credit %v is marked mined and unmined", &op))
 	}
 
-	var amt dcrutil.Amount
+	var amt vhcutil.Amount
 	var opCode uint8
 	var isCoinbase bool
 	var hasExpiry bool
@@ -2402,7 +2402,7 @@ type MultisigCredit struct {
 	MSScript   []byte
 	M          uint8
 	N          uint8
-	Amount     dcrutil.Amount
+	Amount     vhcutil.Amount
 }
 
 // GetMultisigOutput takes an outpoint and returns multisignature
@@ -2419,8 +2419,8 @@ func (s *Store) GetMultisigOutput(ns walletdb.ReadBucket, op *wire.OutPoint) (*M
 
 // UnspentMultisigCreditsForAddress returns all unspent multisignature P2SH
 // credits in the wallet for some specified address.
-func (s *Store) UnspentMultisigCreditsForAddress(ns walletdb.ReadBucket, addr dcrutil.Address) ([]*MultisigCredit, error) {
-	p2shAddr, ok := addr.(*dcrutil.AddressScriptHash)
+func (s *Store) UnspentMultisigCreditsForAddress(ns walletdb.ReadBucket, addr vhcutil.Address) ([]*MultisigCredit, error) {
+	p2shAddr, ok := addr.(*vhcutil.AddressScriptHash)
 	if !ok {
 		return nil, errors.E(errors.Invalid, "address must be P2SH")
 	}
@@ -2520,7 +2520,7 @@ func ticketChangeMatured(params *chaincfg.Params, txHeight, curHeight int32) boo
 // ticketMatured returns whether a ticket mined at txHeight has
 // reached ticket maturity in a chain with a tip height curHeight.
 func ticketMatured(params *chaincfg.Params, txHeight, curHeight int32) bool {
-	// dcrd has an off-by-one in the calculation of the ticket
+	// vhcd has an off-by-one in the calculation of the ticket
 	// maturity, which results in maturity being one block higher
 	// than the params would indicate.
 	return txHeight >= 0 && curHeight-txHeight > int32(params.TicketMaturity)
@@ -2623,11 +2623,11 @@ func (s *Store) minimalCreditToCredit(ns walletdb.ReadBucket, mc *minimalCredit)
 // UnspentOutputsForAmount returns all non-stake outputs that sum up to the
 // amount passed. If not enough funds are found, a nil pointer is returned
 // without error.
-func (s *Store) UnspentOutputsForAmount(ns, addrmgrNs walletdb.ReadBucket, needed dcrutil.Amount, syncHeight int32, minConf int32, all bool, account uint32) ([]*Credit, error) {
+func (s *Store) UnspentOutputsForAmount(ns, addrmgrNs walletdb.ReadBucket, needed vhcutil.Amount, syncHeight int32, minConf int32, all bool, account uint32) ([]*Credit, error) {
 	var eligible []*minimalCredit
 	var toUse []*minimalCredit
 	var unspent []*Credit
-	found := dcrutil.Amount(0)
+	found := vhcutil.Amount(0)
 
 	c := ns.NestedReadBucket(bucketUnspent).ReadCursor()
 	for k, v := c.First(); k != nil; k, v = c.Next() {
@@ -2850,7 +2850,7 @@ func (s *Store) UnspentOutputsForAmount(ns, addrmgrNs walletdb.ReadBucket, neede
 // InputSource provides a method (SelectInputs) to incrementally select unspent
 // outputs to use as transaction inputs.
 type InputSource struct {
-	source func(dcrutil.Amount) (*txauthor.InputDetail, error)
+	source func(vhcutil.Amount) (*txauthor.InputDetail, error)
 }
 
 // SelectInputs selects transaction inputs to redeem unspent outputs stored in
@@ -2859,7 +2859,7 @@ type InputSource struct {
 // input amount referenced by the previous transaction outputs, a slice of
 // transaction inputs referencing these outputs, and a slice of previous output
 // scripts from each previous output referenced by the corresponding input.
-func (s *InputSource) SelectInputs(target dcrutil.Amount) (*txauthor.InputDetail, error) {
+func (s *InputSource) SelectInputs(target vhcutil.Amount) (*txauthor.InputDetail, error) {
 	return s.source(target)
 }
 
@@ -2894,13 +2894,13 @@ func (s *Store) MakeInputSource(ns, addrmgrNs walletdb.ReadBucket, account uint3
 	// Current inputs and their total value.  These are closed over by the
 	// returned input source and reused across multiple calls.
 	var (
-		currentTotal      dcrutil.Amount
+		currentTotal      vhcutil.Amount
 		currentInputs     []*wire.TxIn
 		currentScripts    [][]byte
 		redeemScriptSizes []int
 	)
 
-	f := func(target dcrutil.Amount) (*txauthor.InputDetail, error) {
+	f := func(target vhcutil.Amount) (*txauthor.InputDetail, error) {
 		for currentTotal < target || target == 0 {
 			var k, v []byte
 			if bucketUnspentCursor == nil {
@@ -3274,13 +3274,13 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 				c.Close()
 				return nil, err
 			}
-			votingAuthorityAmt := dcrutil.Amount(0)
-			lockedByTicketsAmt := dcrutil.Amount(0)
+			votingAuthorityAmt := vhcutil.Amount(0)
+			lockedByTicketsAmt := vhcutil.Amount(0)
 
 			// Calculate total input amount which will allow a proper fee calculation.
 			// Fee is needed to be removed from the stake.AmountFromSStxPkScrCommitment
 			// due to the way tickets are constructed and rewards are calculated.
-			totalInputAmount := dcrutil.Amount(0)
+			totalInputAmount := vhcutil.Amount(0)
 			for i := range rec.MsgTx.TxIn {
 				_, credKey, err := existsDebit(ns,
 					&txHash, uint32(i), &blockRec.Block)
@@ -3329,7 +3329,7 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 			}
 			// Calculate the fee here due to the commitamt in the OP_SSTX output script being the total
 			// value in.
-			fee := dcrutil.Amount(0)
+			fee := vhcutil.Amount(0)
 			if totalInputAmount > 0 {
 				fee = totalInputAmount - utxoAmt
 			}
@@ -3418,13 +3418,13 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 			if err != nil {
 				return nil, err
 			}
-			votingAuthorityAmt := dcrutil.Amount(0)
-			lockedByTicketsAmt := dcrutil.Amount(0)
+			votingAuthorityAmt := vhcutil.Amount(0)
+			lockedByTicketsAmt := vhcutil.Amount(0)
 
 			// Calculate total input amount which will allow a proper fee calculation.
 			// Fee is needed to be removed from the stake.AmountFromSStxPkScrCommitment
 			// due to the way tickets are constructed and rewards are calculated.
-			totalInputAmount := dcrutil.Amount(0)
+			totalInputAmount := vhcutil.Amount(0)
 			for _, txin := range rec.MsgTx.TxIn {
 				rawUnmined := existsRawUnmined(ns, txin.PreviousOutPoint.Hash[:])
 				if rawUnmined != nil {
@@ -3435,7 +3435,7 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 						return nil, err
 					}
 					if int(txin.PreviousOutPoint.Index) < len(tx.TxOut) {
-						totalInputAmount += dcrutil.Amount(tx.TxOut[txin.PreviousOutPoint.Index].Value)
+						totalInputAmount += vhcutil.Amount(tx.TxOut[txin.PreviousOutPoint.Index].Value)
 					}
 				} else {
 					_, txVal := latestTxRecord(ns, txin.PreviousOutPoint.Hash[:])
@@ -3448,7 +3448,7 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 						return nil, err
 					}
 					if int(txin.PreviousOutPoint.Index) < len(tx.TxOut) {
-						totalInputAmount += dcrutil.Amount(tx.TxOut[txin.PreviousOutPoint.Index].Value)
+						totalInputAmount += vhcutil.Amount(tx.TxOut[txin.PreviousOutPoint.Index].Value)
 					}
 				}
 			}
@@ -3475,7 +3475,7 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 			}
 			// Calculate the fee here due to the commitamt in the OP_SSTX output script being the total
 			// value in.
-			fee := dcrutil.Amount(0)
+			fee := vhcutil.Amount(0)
 			if totalInputAmount > 0 {
 				fee = totalInputAmount - utxoAmt
 			}
@@ -3501,13 +3501,13 @@ func (s *Store) balanceFullScan(ns, addrmgrNs walletdb.ReadBucket, minConf int32
 // Balances is an convenience type.
 type Balances struct {
 	Account                 uint32
-	ImmatureCoinbaseRewards dcrutil.Amount
-	ImmatureStakeGeneration dcrutil.Amount
-	LockedByTickets         dcrutil.Amount
-	Spendable               dcrutil.Amount
-	Total                   dcrutil.Amount
-	VotingAuthority         dcrutil.Amount
-	Unconfirmed             dcrutil.Amount
+	ImmatureCoinbaseRewards vhcutil.Amount
+	ImmatureStakeGeneration vhcutil.Amount
+	LockedByTickets         vhcutil.Amount
+	Spendable               vhcutil.Amount
+	Total                   vhcutil.Amount
+	VotingAuthority         vhcutil.Amount
+	Unconfirmed             vhcutil.Amount
 }
 
 // AccountBalance returns a Balances struct for some given account at
@@ -3567,10 +3567,10 @@ func (s *Store) StoredTxScripts(ns walletdb.ReadBucket) [][]byte {
 
 // TotalInput calculates the input value referenced by all transaction inputs.
 // If this is not calculable, this returns 0.
-func (s *Store) TotalInput(dbtx walletdb.ReadTx, tx *wire.MsgTx) (dcrutil.Amount, error) {
+func (s *Store) TotalInput(dbtx walletdb.ReadTx, tx *wire.MsgTx) (vhcutil.Amount, error) {
 	ns := dbtx.ReadBucket(wtxmgrBucketKey)
 
-	var total dcrutil.Amount
+	var total vhcutil.Amount
 	for _, in := range tx.TxIn {
 		var tx wire.MsgTx
 		if v := existsRawUnmined(ns, in.PreviousOutPoint.Hash[:]); v != nil {
@@ -3593,7 +3593,7 @@ func (s *Store) TotalInput(dbtx walletdb.ReadTx, tx *wire.MsgTx) (dcrutil.Amount
 			return 0, errors.E(errors.Invalid, errors.Errorf("previous output index %d does not exist in transaction %v", idx, hash))
 		}
 
-		total += dcrutil.Amount(tx.TxOut[in.PreviousOutPoint.Index].Value)
+		total += vhcutil.Amount(tx.TxOut[in.PreviousOutPoint.Index].Value)
 	}
 
 	return total, nil

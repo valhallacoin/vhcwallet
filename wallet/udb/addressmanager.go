@@ -11,14 +11,14 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainec"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/internal/zero"
-	"github.com/decred/dcrwallet/wallet/internal/snacl"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainec"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/internal/zero"
+	"github.com/valhallacoin/vhcwallet/wallet/internal/snacl"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -100,9 +100,9 @@ func isReservedAccountNum(acct uint32) bool {
 // normalizeAddress normalizes addresses for usage by the address manager.  In
 // particular, it converts all pubkeys to pubkey hash addresses so they are
 // interchangeable by callers.
-func normalizeAddress(addr dcrutil.Address) dcrutil.Address {
+func normalizeAddress(addr vhcutil.Address) vhcutil.Address {
 	switch addr := addr.(type) {
-	case *dcrutil.AddressSecpPubKey:
+	case *vhcutil.AddressSecpPubKey:
 		return addr.AddressPubKeyHash()
 	default:
 		return addr
@@ -616,7 +616,7 @@ func (m *Manager) CoinTypePrivKey(dbtx walletdb.ReadTx) (*hdkeychain.ExtendedKey
 // CoinType returns the BIP0044 coin type currently in use.  Early versions of
 // the wallet used coin types that conflicted with other coins, preventing use
 // of the same seed in multicurrency wallets.  New (not restored) wallets are
-// now created using the coin types assigned to Decred in SLIP0044:
+// now created using the coin types assigned to Valhalla in SLIP0044:
 //
 //  https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 //
@@ -648,7 +648,7 @@ func (m *Manager) CoinType(dbtx walletdb.ReadTx) (uint32, error) {
 }
 
 // UpgradeToSLIP0044CoinType upgrades a wallet from using the legacy coin type
-// to the coin type registered to Decred as per SLIP0044.  On mainnet, this
+// to the coin type registered to Valhalla as per SLIP0044.  On mainnet, this
 // upgrades the coin type from 20 to 42.  On testnet and simnet, the coin type
 // is upgraded to 1.  This upgrade is only possible if the SLIP0044 coin type
 // private key is saved and there is no address use for keys derived by the
@@ -859,7 +859,7 @@ func (m *Manager) rowInterfaceToManaged(ns walletdb.ReadBucket, rowInterface int
 // loadAddress attempts to load the passed address from the database.
 //
 // This function MUST be called with the manager lock held for writes.
-func (m *Manager) loadAddress(ns walletdb.ReadBucket, address dcrutil.Address) (ManagedAddress, error) {
+func (m *Manager) loadAddress(ns walletdb.ReadBucket, address vhcutil.Address) (ManagedAddress, error) {
 	// Attempt to load the raw address information from the database.
 	rowInterface, err := fetchAddress(ns, address.ScriptAddress())
 	if err != nil {
@@ -880,7 +880,7 @@ func (m *Manager) loadAddress(ns walletdb.ReadBucket, address dcrutil.Address) (
 // transactions such as the associated private key for pay-to-pubkey and
 // pay-to-pubkey-hash addresses and the script associated with
 // pay-to-script-hash addresses.
-func (m *Manager) Address(ns walletdb.ReadBucket, address dcrutil.Address) (ManagedAddress, error) {
+func (m *Manager) Address(ns walletdb.ReadBucket, address vhcutil.Address) (ManagedAddress, error) {
 	address = normalizeAddress(address)
 	m.mtx.Lock()
 	ma, err := m.loadAddress(ns, address)
@@ -889,7 +889,7 @@ func (m *Manager) Address(ns walletdb.ReadBucket, address dcrutil.Address) (Mana
 }
 
 // AddrAccount returns the account to which the given address belongs.
-func (m *Manager) AddrAccount(ns walletdb.ReadBucket, address dcrutil.Address) (uint32, error) {
+func (m *Manager) AddrAccount(ns walletdb.ReadBucket, address vhcutil.Address) (uint32, error) {
 	acct, err := fetchAddrAccount(ns, normalizeAddress(address).ScriptAddress())
 	if err != nil {
 		if errors.Is(errors.NotExist, err) {
@@ -1144,7 +1144,7 @@ func (m *Manager) ExistsHash160(ns walletdb.ReadBucket, hash160 []byte) bool {
 // watching-only, or not for the same network as the key trying to be imported.
 // It will also return an error if the address already exists.  Any other errors
 // returned are generally unexpected.
-func (m *Manager) ImportPrivateKey(ns walletdb.ReadWriteBucket, wif *dcrutil.WIF) (ManagedPubKeyAddress, error) {
+func (m *Manager) ImportPrivateKey(ns walletdb.ReadWriteBucket, wif *vhcutil.WIF) (ManagedPubKeyAddress, error) {
 	defer m.mtx.Unlock()
 	m.mtx.Lock()
 
@@ -1161,7 +1161,7 @@ func (m *Manager) ImportPrivateKey(ns walletdb.ReadWriteBucket, wif *dcrutil.WIF
 
 	// Prevent duplicates.
 	serializedPubKey := wif.SerializePubKey()
-	pubKeyHash := dcrutil.Hash160(serializedPubKey)
+	pubKeyHash := vhcutil.Hash160(serializedPubKey)
 	if existsAddress(ns, pubKeyHash) {
 		return nil, errors.E(errors.Exist, "address for private key already exists")
 	}
@@ -1218,7 +1218,7 @@ func (m *Manager) ImportScript(ns walletdb.ReadWriteBucket, script []byte) (Mana
 	defer m.mtx.Unlock()
 
 	// Prevent duplicates.
-	scriptHash := dcrutil.Hash160(script)
+	scriptHash := vhcutil.Hash160(script)
 	if existsAddress(ns, scriptHash) {
 		return nil, errors.E(errors.Exist, "script already exists")
 	}
@@ -1379,7 +1379,7 @@ func maxUint32(a, b uint32) uint32 {
 // MarkUsed updates usage statistics of a BIP0044 account address so that the
 // last used address index can be tracked.  There is no effect when called on
 // P2SH addresses or any imported addresses.
-func (m *Manager) MarkUsed(ns walletdb.ReadWriteBucket, address dcrutil.Address) error {
+func (m *Manager) MarkUsed(ns walletdb.ReadWriteBucket, address vhcutil.Address) error {
 	// Version 1 of the database used a bucket that recorded the usage status of
 	// every used address in the wallet.  This was changed in version 2 to
 	// record the last used address of a BIP0044 account's external and internal
@@ -1574,7 +1574,7 @@ func (m *Manager) syncAccountToAddrIndex(ns walletdb.ReadWriteBucket, account ui
 			return err
 		}
 		// This can't error as only good input is passed to
-		// dcrutil.NewAddressPubKeyHash.
+		// vhcutil.NewAddressPubKeyHash.
 		addr, _ := xpubChild.Address(m.chainParams)
 		hash160 := addr.Hash160()[:]
 		if existsAddress(ns, hash160) {
@@ -1808,7 +1808,7 @@ func (m *Manager) ForEachActiveAccountAddress(ns walletdb.ReadBucket, account ui
 
 // ForEachActiveAddress calls the given function with each active address
 // stored in the manager, breaking early on error.
-func (m *Manager) ForEachActiveAddress(ns walletdb.ReadBucket, fn func(addr dcrutil.Address) error) error {
+func (m *Manager) ForEachActiveAddress(ns walletdb.ReadBucket, fn func(addr vhcutil.Address) error) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 
@@ -1827,7 +1827,7 @@ func (m *Manager) ForEachActiveAddress(ns walletdb.ReadBucket, fn func(addr dcru
 // function returns without error, the returned 'done' function must be called
 // when the private key is no longer being used.  Failure to do so will cause
 // deadlocks when the manager is locked.
-func (m *Manager) PrivateKey(ns walletdb.ReadBucket, addr dcrutil.Address) (key chainec.PrivateKey, done func(), err error) {
+func (m *Manager) PrivateKey(ns walletdb.ReadBucket, addr vhcutil.Address) (key chainec.PrivateKey, done func(), err error) {
 	// Lock the manager mutex for writes.  This protects read access to m.locked
 	// and write access to m.returnedPrivKeys and the cached accounts.
 	defer m.mtx.Unlock()
@@ -1914,7 +1914,7 @@ func (m *Manager) PrivateKey(ns walletdb.ReadBucket, addr dcrutil.Address) (key 
 // address.  If this function returns without error, the returned 'done'
 // function must be called when the script is no longer being used. Failure to
 // do so will cause deadlocks when the manager is locked.
-func (m *Manager) RedeemScript(ns walletdb.ReadBucket, addr dcrutil.Address) (script []byte, done func(), err error) {
+func (m *Manager) RedeemScript(ns walletdb.ReadBucket, addr vhcutil.Address) (script []byte, done func(), err error) {
 	// Lock the manager mutex for writes.  This protects read access to m.locked
 	// and write access to m.returnedScripts and the cached accounts.
 	defer m.mtx.Unlock()

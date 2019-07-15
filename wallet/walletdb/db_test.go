@@ -9,9 +9,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	_ "github.com/decred/dcrwallet/wallet/internal/bdb"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	_ "github.com/valhallacoin/vhcwallet/wallet/internal/bdb"
 )
 
 // TestAddDuplicateDriver ensures that adding a duplicate driver does not

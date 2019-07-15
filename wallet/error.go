@@ -1,7 +1,7 @@
 package wallet
 
 import (
-	"github.com/decred/dcrwallet/errors"
+	"github.com/valhallacoin/vhcwallet/errors"
 )
 
 type operation struct {

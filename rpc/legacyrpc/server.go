@@ -19,11 +19,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/loader"
-	"github.com/decred/dcrwallet/ticketbuyer"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/loader"
+	"github.com/valhallacoin/vhcwallet/ticketbuyer"
 	"github.com/gorilla/websocket"
 )
 
@@ -234,13 +234,13 @@ func (s *Server) Stop() {
 }
 
 // handlerClosure creates a closure function for handling requests of the given
-// method.  This may be a request that is handled directly by dcrwallet, or
-// a chain server request that is handled by passing the request down to dcrd.
+// method.  This may be a request that is handled directly by vhcwallet, or
+// a chain server request that is handled by passing the request down to vhcd.
 //
 // NOTE: These handlers do not handle special cases, such as the authenticate
 // method.  Each of these must be checked beforehand (the method is already
 // known) and handled accordingly.
-func (s *Server) handlerClosure(ctx context.Context, request *dcrjson.Request) lazyHandler {
+func (s *Server) handlerClosure(ctx context.Context, request *vhcjson.Request) lazyHandler {
 	log.Infof("RPC method %v invoked by %v", request.Method, remoteAddr(ctx))
 	return lazyApplyHandler(s, request)
 }
@@ -294,7 +294,7 @@ func throttled(threshold int64, h http.Handler) http.Handler {
 
 // idPointer returns a pointer to the passed ID, or nil if the interface is nil.
 // Interface pointers are usually a red flag of doing something incorrectly,
-// but this is only implemented here to work around an oddity with dcrjson,
+// but this is only implemented here to work around an oddity with vhcjson,
 // which uses empty interface pointers for response IDs.
 func idPointer(id interface{}) (p *interface{}) {
 	if id != nil {
@@ -306,12 +306,12 @@ func idPointer(id interface{}) (p *interface{}) {
 // invalidAuth checks whether a websocket request is a valid (parsable)
 // authenticate request and checks the supplied username and passphrase
 // against the server auth.
-func (s *Server) invalidAuth(req *dcrjson.Request) bool {
-	cmd, err := dcrjson.UnmarshalCmd(req)
+func (s *Server) invalidAuth(req *vhcjson.Request) bool {
+	cmd, err := vhcjson.UnmarshalCmd(req)
 	if err != nil {
 		return false
 	}
-	authCmd, ok := cmd.(*dcrjson.AuthenticateCmd)
+	authCmd, ok := cmd.(*vhcjson.AuthenticateCmd)
 	if !ok {
 		return false
 	}
@@ -352,7 +352,7 @@ out:
 				break out
 			}
 
-			var req dcrjson.Request
+			var req vhcjson.Request
 			err := json.Unmarshal(reqBytes, &req)
 			if err != nil {
 				log.Warnf("Failed unmarshal of JSON-RPC request object "+
@@ -362,7 +362,7 @@ out:
 					break out
 				}
 				resp := makeResponse(req.ID, nil,
-					dcrjson.ErrRPCInvalidRequest)
+					vhcjson.ErrRPCInvalidRequest)
 				mresp, err := json.Marshal(resp)
 				// We expect the marshal to succeed.  If it
 				// doesn't, it indicates some non-marshalable
@@ -413,7 +413,7 @@ out:
 			case "stop":
 				log.Infof("RPC method stop invoked by %s", remoteAddr(ctx))
 				resp := makeResponse(req.ID,
-					"dcrwallet stopping.", nil)
+					"vhcwallet stopping.", nil)
 				mresp, err := json.Marshal(resp)
 				// Expected to never fail.
 				if err != nil {
@@ -432,7 +432,7 @@ out:
 				wsc.wg.Add(1)
 				go func() {
 					resp, jsonErr := f()
-					mresp, err := dcrjson.MarshalResponse(req.Jsonrpc, req.ID, resp, jsonErr)
+					mresp, err := vhcjson.MarshalResponse(req.Jsonrpc, req.ID, resp, jsonErr)
 					if err != nil {
 						log.Errorf("Unable to marshal response to client %s: %v",
 							remoteAddr(ctx), err)
@@ -532,10 +532,10 @@ func (s *Server) postClientRPC(w http.ResponseWriter, r *http.Request) {
 	// If unfound, the request is sent to the chain server for further
 	// processing.  While checking the methods, disallow authenticate
 	// requests, as they are invalid for HTTP POST clients.
-	var req dcrjson.Request
+	var req vhcjson.Request
 	err = json.Unmarshal(rpcRequest, &req)
 	if err != nil {
-		resp, err := dcrjson.MarshalResponse(req.Jsonrpc, req.ID, nil, dcrjson.ErrRPCInvalidRequest)
+		resp, err := vhcjson.MarshalResponse(req.Jsonrpc, req.ID, nil, vhcjson.ErrRPCInvalidRequest)
 		if err != nil {
 			log.Errorf("Unable to marshal response to client %s: %v",
 				r.RemoteAddr, err)
@@ -554,7 +554,7 @@ func (s *Server) postClientRPC(w http.ResponseWriter, r *http.Request) {
 	// Create the response and error from the request.  Two special cases
 	// are handled for the authenticate and stop request methods.
 	var res interface{}
-	var jsonErr *dcrjson.RPCError
+	var jsonErr *vhcjson.RPCError
 	var stop bool
 	switch req.Method {
 	case "authenticate":
@@ -565,13 +565,13 @@ func (s *Server) postClientRPC(w http.ResponseWriter, r *http.Request) {
 	case "stop":
 		log.Infof("RPC method stop invoked by %s", r.RemoteAddr)
 		stop = true
-		res = "dcrwallet stopping"
+		res = "vhcwallet stopping"
 	default:
 		res, jsonErr = s.handlerClosure(ctx, &req)()
 	}
 
 	// Marshal and send.
-	mresp, err := dcrjson.MarshalResponse(req.Jsonrpc, req.ID, res, jsonErr)
+	mresp, err := vhcjson.MarshalResponse(req.Jsonrpc, req.ID, res, jsonErr)
 	if err != nil {
 		log.Errorf("Unable to marshal response to client %s: %v",
 			r.RemoteAddr, err)

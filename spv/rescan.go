@@ -6,10 +6,10 @@
 package spv
 
 import (
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 // rescanCheckTransaction is a helper function to rescan both stake and regular

@@ -14,15 +14,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/internal/prompt"
-	"github.com/decred/dcrwallet/loader"
-	"github.com/decred/dcrwallet/wallet"
-	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
-	"github.com/decred/dcrwallet/walletseed"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/internal/prompt"
+	"github.com/valhallacoin/vhcwallet/loader"
+	"github.com/valhallacoin/vhcwallet/wallet"
+	_ "github.com/valhallacoin/vhcwallet/wallet/drivers/bdb"
+	"github.com/valhallacoin/vhcwallet/walletseed"
 )
 
 // networkDir returns the directory name of a network directory to hold wallet

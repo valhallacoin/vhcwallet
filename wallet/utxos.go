@@ -3,14 +3,14 @@ package wallet
 import (
 	"time"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/txauthor"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/txauthor"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 )
 
 // OutputSelectionPolicy describes the rules for selecting an output from the
@@ -101,7 +101,7 @@ func (w *Wallet) UnspentOutputs(policy OutputSelectionPolicy) ([]*TransactionOut
 
 // SelectInputs selects transaction inputs to redeem unspent outputs stored in
 // the wallet.  It returns an input detail summary.
-func (w *Wallet) SelectInputs(targetAmount dcrutil.Amount, policy OutputSelectionPolicy) (inputDetail *txauthor.InputDetail, err error) {
+func (w *Wallet) SelectInputs(targetAmount vhcutil.Amount, policy OutputSelectionPolicy) (inputDetail *txauthor.InputDetail, err error) {
 	const op errors.Op = "wallet.SelectInputs"
 	err = walletdb.View(w.db, func(tx walletdb.ReadTx) error {
 		addrmgrNs := tx.ReadBucket(waddrmgrNamespaceKey)
@@ -134,7 +134,7 @@ func (w *Wallet) SelectInputs(targetAmount dcrutil.Amount, policy OutputSelectio
 // using an outpoint.
 type OutputInfo struct {
 	Received     time.Time
-	Amount       dcrutil.Amount
+	Amount       vhcutil.Amount
 	FromCoinbase bool
 }
 
@@ -155,7 +155,7 @@ func (w *Wallet) OutputInfo(out *wire.OutPoint) (OutputInfo, error) {
 		}
 
 		info.Received = txDetails.Received
-		info.Amount = dcrutil.Amount(txDetails.TxRecord.MsgTx.TxOut[out.Index].Value)
+		info.Amount = vhcutil.Amount(txDetails.TxRecord.MsgTx.TxOut[out.Index].Value)
 		info.FromCoinbase = blockchain.IsCoinBaseTx(&txDetails.TxRecord.MsgTx)
 		return nil
 	})

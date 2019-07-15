@@ -8,47 +8,47 @@ package legacyrpc
 import (
 	"fmt"
 
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrwallet/errors"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcwallet/errors"
 )
 
-func convertError(err error) *dcrjson.RPCError {
-	if err, ok := err.(*dcrjson.RPCError); ok {
+func convertError(err error) *vhcjson.RPCError {
+	if err, ok := err.(*vhcjson.RPCError); ok {
 		return err
 	}
 
-	code := dcrjson.ErrRPCWallet
+	code := vhcjson.ErrRPCWallet
 	if err, ok := err.(*errors.Error); ok {
 		switch err.Kind {
 		case errors.Bug:
-			code = dcrjson.ErrRPCInternal.Code
+			code = vhcjson.ErrRPCInternal.Code
 		case errors.Encoding:
-			code = dcrjson.ErrRPCInvalidParameter
+			code = vhcjson.ErrRPCInvalidParameter
 		case errors.Locked:
-			code = dcrjson.ErrRPCWalletUnlockNeeded
+			code = vhcjson.ErrRPCWalletUnlockNeeded
 		case errors.Passphrase:
-			code = dcrjson.ErrRPCWalletPassphraseIncorrect
+			code = vhcjson.ErrRPCWalletPassphraseIncorrect
 		case errors.NoPeers:
-			code = dcrjson.ErrRPCClientNotConnected
+			code = vhcjson.ErrRPCClientNotConnected
 		case errors.InsufficientBalance:
-			code = dcrjson.ErrRPCWalletInsufficientFunds
+			code = vhcjson.ErrRPCWalletInsufficientFunds
 		}
 	}
-	return &dcrjson.RPCError{
+	return &vhcjson.RPCError{
 		Code:    code,
 		Message: err.Error(),
 	}
 }
 
-func rpcError(code dcrjson.RPCErrorCode, err error) *dcrjson.RPCError {
-	return &dcrjson.RPCError{
+func rpcError(code vhcjson.RPCErrorCode, err error) *vhcjson.RPCError {
+	return &vhcjson.RPCError{
 		Code:    code,
 		Message: err.Error(),
 	}
 }
 
-func rpcErrorf(code dcrjson.RPCErrorCode, format string, args ...interface{}) *dcrjson.RPCError {
-	return &dcrjson.RPCError{
+func rpcErrorf(code vhcjson.RPCErrorCode, format string, args ...interface{}) *vhcjson.RPCError {
+	return &vhcjson.RPCError{
 		Code:    code,
 		Message: fmt.Sprintf(format, args...),
 	}
@@ -56,48 +56,48 @@ func rpcErrorf(code dcrjson.RPCErrorCode, format string, args ...interface{}) *d
 
 // Errors variables that are defined once here to avoid duplication.
 var (
-	errUnloadedWallet = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCWallet,
+	errUnloadedWallet = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCWallet,
 		Message: "request requires a wallet but wallet has not loaded yet",
 	}
 
-	errRPCClientNotConnected = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCClientNotConnected,
+	errRPCClientNotConnected = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCClientNotConnected,
 		Message: "disconnected from consensus RPC",
 	}
 
-	errNoNetwork = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCClientNotConnected,
+	errNoNetwork = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCClientNotConnected,
 		Message: "disconnected from network",
 	}
 
-	errAccountNotFound = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCWalletInvalidAccountName,
+	errAccountNotFound = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCWalletInvalidAccountName,
 		Message: "account not found",
 	}
 
-	errAddressNotInWallet = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCWallet,
+	errAddressNotInWallet = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCWallet,
 		Message: "address not found in wallet",
 	}
 
-	errNotImportedAccount = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCWallet,
+	errNotImportedAccount = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCWallet,
 		Message: "imported addresses must belong to the imported account",
 	}
 
-	errNeedPositiveAmount = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCInvalidParameter,
+	errNeedPositiveAmount = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCInvalidParameter,
 		Message: "amount must be positive",
 	}
 
-	errWalletUnlockNeeded = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCWalletUnlockNeeded,
+	errWalletUnlockNeeded = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCWalletUnlockNeeded,
 		Message: "enter the wallet passphrase with walletpassphrase first",
 	}
 
-	errReservedAccountName = &dcrjson.RPCError{
-		Code:    dcrjson.ErrRPCInvalidParameter,
+	errReservedAccountName = &vhcjson.RPCError{
+		Code:    vhcjson.ErrRPCInvalidParameter,
 		Message: "account name is reserved by RPC server",
 	}
 )

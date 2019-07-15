@@ -13,15 +13,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/decred/dcrd/addrmgr"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/lru"
-	"github.com/decred/dcrwallet/p2p"
-	"github.com/decred/dcrwallet/validate"
-	"github.com/decred/dcrwallet/wallet"
+	"github.com/valhallacoin/vhcd/addrmgr"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/lru"
+	"github.com/valhallacoin/vhcwallet/p2p"
+	"github.com/valhallacoin/vhcwallet/validate"
+	"github.com/valhallacoin/vhcwallet/wallet"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,7 +30,7 @@ import (
 // they do not provide each of these services.
 const reqSvcs = wire.SFNodeNetwork | wire.SFNodeCF
 
-// Syncer implements wallet synchronization services by over the Decred wire
+// Syncer implements wallet synchronization services by over the Valhalla wire
 // protocol using Simplified Payment Verification (SPV) with compact filters.
 type Syncer struct {
 	// atomics

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // expectedAddr is used to house the expected return values from a managed
@@ -59,7 +59,7 @@ var (
 	walletConfig = Config{
 		PubPassphrase: pubPassphrase,
 		GapLimit:      20,
-		RelayFee:      dcrutil.Amount(1e5).ToCoin(),
+		RelayFee:      vhcutil.Amount(1e5).ToCoin(),
 		Params:        &chaincfg.SimNetParams,
 	}
 

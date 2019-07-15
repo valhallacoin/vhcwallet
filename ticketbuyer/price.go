@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/valhallacoin/vhcd/vhcutil"
 )
 
 var (
@@ -53,23 +53,23 @@ func containsVWAPHeightOffsetError(err error) bool {
 
 // calcAverageTicketPrice calculates the average price of a ticket based on
 // the parameters set by the user.
-func (t *TicketPurchaser) calcAverageTicketPrice(height int64) (dcrutil.Amount, error) {
+func (t *TicketPurchaser) calcAverageTicketPrice(height int64) (vhcutil.Amount, error) {
 	// Pull and store relevant data about the blockchain. Calculate a
 	// "reasonable" ticket price by using the VWAP for the last delta many
 	// blocks or the average price of all tickets in the ticket pool.
 	// If the user has selected dual mode, it will use an average of
 	// these two prices.
-	var avgPricePoolAmt dcrutil.Amount
+	var avgPricePoolAmt vhcutil.Amount
 	if t.priceMode == AvgPricePoolMode || t.priceMode == AvgPriceDualMode {
-		poolValue, err := t.dcrdChainSvr.GetTicketPoolValue()
+		poolValue, err := t.vhcdChainSvr.GetTicketPoolValue()
 		if err != nil {
 			return 0, err
 		}
-		bestBlockH, err := t.dcrdChainSvr.GetBestBlockHash()
+		bestBlockH, err := t.vhcdChainSvr.GetBestBlockHash()
 		if err != nil {
 			return 0, err
 		}
-		blkHeader, err := t.dcrdChainSvr.GetBlockHeader(bestBlockH)
+		blkHeader, err := t.vhcdChainSvr.GetBlockHeader(bestBlockH)
 		if err != nil {
 			return 0, err
 		}
@@ -81,14 +81,14 @@ func (t *TicketPurchaser) calcAverageTicketPrice(height int64) (dcrutil.Amount, 
 			poolSize++
 		}
 
-		avgPricePoolAmt = poolValue / dcrutil.Amount(poolSize)
+		avgPricePoolAmt = poolValue / vhcutil.Amount(poolSize)
 
 		if t.priceMode == AvgPricePoolMode {
 			return avgPricePoolAmt, err
 		}
 	}
 
-	var ticketVWAP dcrutil.Amount
+	var ticketVWAP vhcutil.Amount
 	if t.priceMode == AvgPriceVWAPMode || t.priceMode == AvgPriceDualMode {
 		// Don't let the starting height be <0, which in the case of
 		// uint32 ends up a really big number.
@@ -102,7 +102,7 @@ func (t *TicketPurchaser) calcAverageTicketPrice(height int64) (dcrutil.Amount, 
 		// if the chain gives us an issue.
 		var err error
 		for i := 0; i < vwapReqTries; i++ {
-			ticketVWAP, err = t.dcrdChainSvr.TicketVWAP(&startVWAPHeight,
+			ticketVWAP, err = t.vhcdChainSvr.TicketVWAP(&startVWAPHeight,
 				&endVWAPHeight)
 			if err != nil && containsVWAPHeightOffsetError(err) {
 				log.Tracef("Failed to fetch ticket VWAP "+

@@ -10,18 +10,18 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/decred/dcrd/blockchain"
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/txrules"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/blockchain"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/txrules"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 )
 
 func (w *Wallet) extendMainChain(op errors.Op, dbtx walletdb.ReadWriteTx, header *wire.BlockHeader, f *gcs.Filter, transactions []*wire.MsgTx) ([]wire.OutPoint, error) {
@@ -212,7 +212,7 @@ func (w *Wallet) ChainSwitch(forest *SidechainForest, chain []*BlockNode, releva
 // evaluateStakePoolTicket evaluates a stake pool ticket to see if it's
 // acceptable to the stake pool. The ticket must pay out to the stake
 // pool cold wallet, and must have a sufficient fee.
-func (w *Wallet) evaluateStakePoolTicket(rec *udb.TxRecord, blockHeight int32, poolUser dcrutil.Address) bool {
+func (w *Wallet) evaluateStakePoolTicket(rec *udb.TxRecord, blockHeight int32, poolUser vhcutil.Address) bool {
 	const op errors.Op = "wallet.evaluateStakePoolTicket"
 
 	tx := rec.MsgTx
@@ -232,7 +232,7 @@ func (w *Wallet) evaluateStakePoolTicket(rec *udb.TxRecord, blockHeight int32, p
 	}
 
 	// Extract the fee from the ticket.
-	in := dcrutil.Amount(0)
+	in := vhcutil.Amount(0)
 	for i := range tx.TxOut {
 		if i%2 != 0 {
 			commitAmt, err := stake.AmountFromSStxPkScrCommitment(
@@ -245,9 +245,9 @@ func (w *Wallet) evaluateStakePoolTicket(rec *udb.TxRecord, blockHeight int32, p
 			in += commitAmt
 		}
 	}
-	out := dcrutil.Amount(0)
+	out := vhcutil.Amount(0)
 	for i := range tx.TxOut {
-		out += dcrutil.Amount(tx.TxOut[i].Value)
+		out += vhcutil.Amount(tx.TxOut[i].Value)
 	}
 	fees := in - out
 
@@ -262,7 +262,7 @@ func (w *Wallet) evaluateStakePoolTicket(rec *udb.TxRecord, blockHeight int32, p
 
 		// Calculate the fee required based on the current
 		// height and the required amount from the pool.
-		feeNeeded := txrules.StakePoolTicketFee(dcrutil.Amount(
+		feeNeeded := txrules.StakePoolTicketFee(vhcutil.Amount(
 			tx.TxOut[0].Value), fees, blockHeight, w.PoolFees(),
 			w.ChainParams())
 		if commitAmt < feeNeeded {
@@ -442,7 +442,7 @@ func (w *Wallet) processTransactionRecord(dbtx walletdb.ReadWriteTx, rec *udb.Tx
 		}
 
 		if insert {
-			err := w.StakeMgr.InsertSStx(stakemgrNs, dcrutil.NewTx(&rec.MsgTx))
+			err := w.StakeMgr.InsertSStx(stakemgrNs, vhcutil.NewTx(&rec.MsgTx))
 			if err != nil {
 				log.Errorf("Failed to insert SStx %v"+
 					"into the stake store.", &rec.Hash)
@@ -569,7 +569,7 @@ func (w *Wallet) processTransactionRecord(dbtx walletdb.ReadWriteTx, rec *udb.Tx
 					if n, err := w.NetworkBackend(); err == nil {
 						addr := mscriptaddr.Address()
 						err := n.LoadTxFilter(context.TODO(),
-							false, []dcrutil.Address{addr}, nil)
+							false, []vhcutil.Address{addr}, nil)
 						if err != nil {
 							return nil, errors.E(op, err)
 						}
@@ -883,8 +883,8 @@ func (w *Wallet) VoteOnOwnedTickets(winningTicketHashes []*chainhash.Hash, block
 				break
 			}
 		}
-		rpcErr, ok := err.(*dcrjson.RPCError)
-		if !ok || rpcErr.Code != dcrjson.ErrRPCDuplicateTx {
+		rpcErr, ok := err.(*vhcjson.RPCError)
+		if !ok || rpcErr.Code != vhcjson.ErrRPCDuplicateTx {
 			log.Errorf("Failed to send one or more votes: %v", err)
 		}
 	}
@@ -960,7 +960,7 @@ func (w *Wallet) RevokeOwnedTickets(missedTicketHashes []*chainhash.Hash) error 
 					ticketHash, err)
 				continue
 			}
-			err = w.checkHighFees(dcrutil.Amount(ticketPurchase.TxOut[0].Value), revocation)
+			err = w.checkHighFees(vhcutil.Amount(ticketPurchase.TxOut[0].Value), revocation)
 			if err != nil {
 				log.Errorf("Revocation pays exceedingly high fees")
 				continue

@@ -6,8 +6,8 @@
 package txsizes
 
 import (
-	"github.com/decred/dcrd/wire"
-	h "github.com/decred/dcrwallet/internal/helpers"
+	"github.com/valhallacoin/vhcd/wire"
+	h "github.com/valhallacoin/vhcwallet/internal/helpers"
 )
 
 // Worst case script and input/output size estimates.

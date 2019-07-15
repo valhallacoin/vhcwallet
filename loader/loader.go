@@ -9,13 +9,13 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrwallet/chain"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/ticketbuyer"
-	"github.com/decred/dcrwallet/wallet"
-	_ "github.com/decred/dcrwallet/wallet/drivers/bdb" // driver loaded during init
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcwallet/chain"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/ticketbuyer"
+	"github.com/valhallacoin/vhcwallet/wallet"
+	_ "github.com/valhallacoin/vhcwallet/wallet/drivers/bdb" // driver loaded during init
 )
 
 const (
@@ -56,8 +56,8 @@ type StakeOptions struct {
 	VotingEnabled       bool
 	TicketFee           float64
 	AddressReuse        bool
-	VotingAddress       dcrutil.Address
-	PoolAddress         dcrutil.Address
+	VotingAddress       vhcutil.Address
+	PoolAddress         vhcutil.Address
 	PoolFees            float64
 	StakePoolColdExtKey string
 }
@@ -441,7 +441,7 @@ func (l *Loader) StartTicketPurchase(passphrase []byte, ticketbuyerCfg *ticketbu
 
 	c, err := chain.RPCClientFromBackend(l.backend)
 	if err != nil {
-		return errors.E(op, errors.Invalid, "dcrd RPC client must be loaded")
+		return errors.E(op, errors.Invalid, "vhcd RPC client must be loaded")
 	}
 
 	w := l.wallet

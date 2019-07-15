@@ -12,21 +12,21 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/decred/dcrd/addrmgr"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/connmgr"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/gcs/blockcf"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/lru"
-	"github.com/decred/dcrwallet/version"
+	"github.com/valhallacoin/vhcd/addrmgr"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/connmgr"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/lru"
+	"github.com/valhallacoin/vhcwallet/version"
 	"golang.org/x/sync/errgroup"
 )
 
 // uaName is the LocalPeer useragent name.
-const uaName = "dcrwallet"
+const uaName = "vhcwallet"
 
 // uaVersion is the LocalPeer useragent version.
 var uaVersion = version.String()

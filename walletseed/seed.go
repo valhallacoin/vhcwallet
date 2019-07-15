@@ -10,9 +10,9 @@ import (
 	"encoding/hex"
 	"strings"
 
-	"github.com/decred/dcrd/hdkeychain"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/pgpwordlist"
+	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/pgpwordlist"
 )
 
 // GenerateRandomSeed returns a new seed created from a cryptographically-secure

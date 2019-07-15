@@ -7,14 +7,14 @@ package wallet
 import (
 	"context"
 
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/gcs"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
+	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/gcs"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
 )
 
-// Peer provides wallets with a subset of Decred network functionality available
+// Peer provides wallets with a subset of Valhalla network functionality available
 // to a single peer.
 type Peer interface {
 	GetBlocks(ctx context.Context, blockHashes []*chainhash.Hash) ([]*wire.MsgBlock, error)
@@ -23,7 +23,7 @@ type Peer interface {
 	PublishTransactions(ctx context.Context, txs ...*wire.MsgTx) error
 }
 
-// NetworkBackend provides wallets with Decred network functionality.  Some
+// NetworkBackend provides wallets with Valhalla network functionality.  Some
 // wallet operations require the wallet to be associated with a network backend
 // to complete.
 //
@@ -31,13 +31,13 @@ type Peer interface {
 // functionality for rescanning and filtering.
 type NetworkBackend interface {
 	Peer
-	LoadTxFilter(ctx context.Context, reload bool, addrs []dcrutil.Address, outpoints []wire.OutPoint) error
+	LoadTxFilter(ctx context.Context, reload bool, addrs []vhcutil.Address, outpoints []wire.OutPoint) error
 	Rescan(ctx context.Context, blocks []chainhash.Hash, r RescanSaver) error
 
 	// This is impossible to determine over the wire protocol, and will always
 	// error.  Use Wallet.NextStakeDifficulty to calculate the next ticket price
 	// when the DCP0001 deployment is known to be active.
-	StakeDifficulty(ctx context.Context) (dcrutil.Amount, error)
+	StakeDifficulty(ctx context.Context) (vhcutil.Amount, error)
 }
 
 // NetworkBackend returns the currently associated network backend of the

@@ -16,15 +16,15 @@ import (
 	"io"
 	"os"
 
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrutil"
-	"github.com/decred/dcrutil/hdkeychain"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	_ "github.com/decred/dcrwallet/wallet/internal/bdb"
-	"github.com/decred/dcrwallet/wallet/udb"
-	"github.com/decred/dcrwallet/walletseed"
+	"github.com/valhallacoin/vhcd/blockchain/stake"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcutil"
+	"github.com/valhallacoin/vhcutil/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	_ "github.com/valhallacoin/vhcwallet/wallet/internal/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
+	"github.com/valhallacoin/vhcwallet/walletseed"
 )
 
 const dbname = "v2.db"
@@ -89,7 +89,7 @@ func setup() error {
 			Bits:         1,
 			ExtendedBits: []byte{0, 0, 0, 4},
 		}
-		return smgr.InsertSStx(ns, dcrutil.NewTx(&ticketPurchase), vb)
+		return smgr.InsertSStx(ns, vhcutil.NewTx(&ticketPurchase), vb)
 	})
 }
 

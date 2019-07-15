@@ -17,13 +17,13 @@
 package main
 
 import (
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
 )
 
 // makeTx generates a transaction spending outputs to a single address.
-func makeTx(inputs []*extendedOutPoint, addr dcrutil.Address, txFee int64) (*wire.MsgTx, error) {
+func makeTx(inputs []*extendedOutPoint, addr vhcutil.Address, txFee int64) (*wire.MsgTx, error) {
 	mtx := wire.NewMsgTx()
 
 	allInAmts := int64(0)

@@ -16,24 +16,24 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/internal/cfgutil"
-	"github.com/decred/dcrwallet/netparams"
-	"github.com/decred/dcrwallet/ticketbuyer"
-	"github.com/decred/dcrwallet/version"
-	"github.com/decred/dcrwallet/wallet"
-	"github.com/decred/dcrwallet/wallet/txrules"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/internal/cfgutil"
+	"github.com/valhallacoin/vhcwallet/netparams"
+	"github.com/valhallacoin/vhcwallet/ticketbuyer"
+	"github.com/valhallacoin/vhcwallet/version"
+	"github.com/valhallacoin/vhcwallet/wallet"
+	"github.com/valhallacoin/vhcwallet/wallet/txrules"
 	"github.com/decred/slog"
 	flags "github.com/jessevdk/go-flags"
 )
 
 const (
-	defaultCAFilename          = "dcrd.cert"
-	defaultConfigFilename      = "dcrwallet.conf"
+	defaultCAFilename          = "vhcd.cert"
+	defaultConfigFilename      = "vhcwallet.conf"
 	defaultLogLevel            = "info"
 	defaultLogDirname          = "logs"
-	defaultLogFilename         = "dcrwallet.log"
+	defaultLogFilename         = "vhcwallet.log"
 	defaultRPCMaxClients       = 10
 	defaultRPCMaxWebsockets    = 25
 	defaultEnableTicketBuyer   = false
@@ -52,8 +52,8 @@ const (
 	defaultAccountGapLimit     = wallet.DefaultAccountGapLimit
 
 	// ticket buyer options
-	defaultMaxFee                    dcrutil.Amount = 1e6
-	defaultMinFee                    dcrutil.Amount = 1e5
+	defaultMaxFee                    vhcutil.Amount = 1e6
+	defaultMinFee                    vhcutil.Amount = 1e5
 	defaultMaxPriceScale                            = 0.0
 	defaultAvgVWAPPriceDelta                        = 2880
 	defaultMaxPerBlock                              = 1
@@ -73,8 +73,8 @@ const (
 )
 
 var (
-	dcrdDefaultCAFile  = filepath.Join(dcrutil.AppDataDir("dcrd", false), "rpc.cert")
-	defaultAppDataDir  = dcrutil.AppDataDir("dcrwallet", false)
+	vhcdDefaultCAFile  = filepath.Join(vhcutil.AppDataDir("vhcd", false), "rpc.cert")
+	defaultAppDataDir  = vhcutil.AppDataDir("vhcwallet", false)
 	defaultConfigFile  = filepath.Join(defaultAppDataDir, defaultConfigFilename)
 	defaultRPCKeyFile  = filepath.Join(defaultAppDataDir, "rpc.key")
 	defaultRPCCertFile = filepath.Join(defaultAppDataDir, "rpc.cert")
@@ -118,11 +118,11 @@ type config struct {
 	legacyTicketBuyer   bool
 
 	// RPC client options
-	RPCConnect       string                  `short:"c" long:"rpcconnect" description:"Hostname/IP and port of dcrd RPC server to connect to"`
-	CAFile           *cfgutil.ExplicitString `long:"cafile" description:"File containing root certificates to authenticate a TLS connections with dcrd"`
+	RPCConnect       string                  `short:"c" long:"rpcconnect" description:"Hostname/IP and port of vhcd RPC server to connect to"`
+	CAFile           *cfgutil.ExplicitString `long:"cafile" description:"File containing root certificates to authenticate a TLS connections with vhcd"`
 	DisableClientTLS bool                    `long:"noclienttls" description:"Disable TLS for the RPC client -- NOTE: This is only allowed if the RPC client is connecting to localhost"`
-	DcrdUsername     string                  `long:"dcrdusername" description:"Username for dcrd authentication"`
-	DcrdPassword     string                  `long:"dcrdpassword" default-mask:"-" description:"Password for dcrd authentication"`
+	VhcdUsername     string                  `long:"vhcdusername" description:"Username for vhcd authentication"`
+	VhcdPassword     string                  `long:"vhcdpassword" default-mask:"-" description:"Password for vhcd authentication"`
 	Proxy            string                  `long:"proxy" description:"Connect via SOCKS5 proxy (eg. 127.0.0.1:9050)"`
 	ProxyUser        string                  `long:"proxyuser" description:"Username for proxy server"`
 	ProxyPass        string                  `long:"proxypass" default-mask:"-" description:"Password for proxy server"`
@@ -150,8 +150,8 @@ type config struct {
 	NoLegacyRPC            bool                    `long:"nolegacyrpc" description:"Disable the legacy JSON-RPC server"`
 	LegacyRPCMaxClients    int64                   `long:"rpcmaxclients" description:"Max number of legacy JSON-RPC clients for standard connections"`
 	LegacyRPCMaxWebsockets int64                   `long:"rpcmaxwebsockets" description:"Max number of legacy JSON-RPC websocket connections"`
-	Username               string                  `short:"u" long:"username" description:"Username for legacy JSON-RPC and dcrd authentication (if dcrdusername is unset)"`
-	Password               string                  `short:"P" long:"password" default-mask:"-" description:"Password for legacy JSON-RPC and dcrd authentication (if dcrdpassword is unset)"`
+	Username               string                  `short:"u" long:"username" description:"Username for legacy JSON-RPC and vhcd authentication (if vhcdusername is unset)"`
+	Password               string                  `short:"P" long:"password" default-mask:"-" description:"Password for legacy JSON-RPC and vhcd authentication (if vhcdpassword is unset)"`
 
 	// IPC options
 	PipeTx            *uint `long:"pipetx" description:"File descriptor or handle of write end pipe to enable child -> parent process communication"`
@@ -329,7 +329,7 @@ func parseAndSetDebugLevels(debugLevel string) error {
 //      3) Load configuration file overwriting defaults with any specified options
 //      4) Parse CLI options and overwrite/add any specified options
 //
-// The above results in dcrwallet functioning properly without any config
+// The above results in vhcwallet functioning properly without any config
 // settings while still allowing the user to override settings with config files
 // and command line options.  Command line options always take precedence.
 // The bool returned indicates whether or not the wallet was recreated from a
@@ -816,12 +816,12 @@ func loadConfig(ctx context.Context) (*config, []string, error) {
 			return loadConfigError(err)
 		}
 	} else {
-		// If CAFile is unset, choose either the copy or local dcrd cert.
+		// If CAFile is unset, choose either the copy or local vhcd cert.
 		if !cfg.CAFile.ExplicitlySet() {
 			cfg.CAFile.Value = filepath.Join(cfg.AppDataDir.Value, defaultCAFilename)
 
 			// If the CA copy does not exist, check if we're connecting to
-			// a local dcrd and switch to its RPC cert if it exists.
+			// a local vhcd and switch to its RPC cert if it exists.
 			certExists, err := cfgutil.FileExists(cfg.CAFile.Value)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
@@ -829,14 +829,14 @@ func loadConfig(ctx context.Context) (*config, []string, error) {
 			}
 			if !certExists {
 				if _, ok := localhostListeners[RPCHost]; ok {
-					dcrdCertExists, err := cfgutil.FileExists(
-						dcrdDefaultCAFile)
+					vhcdCertExists, err := cfgutil.FileExists(
+						vhcdDefaultCAFile)
 					if err != nil {
 						fmt.Fprintln(os.Stderr, err)
 						return loadConfigError(err)
 					}
-					if dcrdCertExists {
-						cfg.CAFile.Value = dcrdDefaultCAFile
+					if vhcdCertExists {
+						cfg.CAFile.Value = vhcdDefaultCAFile
 					}
 				}
 			}
@@ -953,15 +953,15 @@ func loadConfig(ctx context.Context) (*config, []string, error) {
 	cfg.RPCCert.Value = cleanAndExpandPath(cfg.RPCCert.Value)
 	cfg.RPCKey.Value = cleanAndExpandPath(cfg.RPCKey.Value)
 
-	// If the dcrd username or password are unset, use the same auth as for
-	// the client.  The two settings were previously shared for dcrd and
+	// If the vhcd username or password are unset, use the same auth as for
+	// the client.  The two settings were previously shared for vhcd and
 	// client auth, so this avoids breaking backwards compatibility while
-	// allowing users to use different auth settings for dcrd and wallet.
-	if cfg.DcrdUsername == "" {
-		cfg.DcrdUsername = cfg.Username
+	// allowing users to use different auth settings for vhcd and wallet.
+	if cfg.VhcdUsername == "" {
+		cfg.VhcdUsername = cfg.Username
 	}
-	if cfg.DcrdPassword == "" {
-		cfg.DcrdPassword = cfg.Password
+	if cfg.VhcdPassword == "" {
+		cfg.VhcdPassword = cfg.Password
 	}
 
 	// Warn if user still has an old ticket buyer configuration file.

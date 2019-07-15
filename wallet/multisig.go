@@ -5,15 +5,15 @@
 package wallet
 
 import (
-	"github.com/decred/dcrd/dcrec"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/wallet/internal/txsizes"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	"github.com/decred/dcrwallet/wallet/txrules"
-	"github.com/decred/dcrwallet/wallet/udb"
+	"github.com/valhallacoin/vhcd/vhcec"
+	"github.com/valhallacoin/vhcd/vhcutil"
+	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/wire"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/wallet/internal/txsizes"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	"github.com/valhallacoin/vhcwallet/wallet/txrules"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
 )
 
 // MakeSecp256k1MultiSigScript creates a multi-signature script that can be
@@ -23,10 +23,10 @@ import (
 //
 // This function only works with secp256k1 pubkeys and P2PKH addresses derived
 // from them.
-func (w *Wallet) MakeSecp256k1MultiSigScript(secp256k1Addrs []dcrutil.Address, nRequired int) ([]byte, error) {
+func (w *Wallet) MakeSecp256k1MultiSigScript(secp256k1Addrs []vhcutil.Address, nRequired int) ([]byte, error) {
 	const op errors.Op = "wallet.MakeSecp256k1MultiSigScript"
 
-	secp256k1PubKeys := make([]*dcrutil.AddressSecpPubKey, len(secp256k1Addrs))
+	secp256k1PubKeys := make([]*vhcutil.AddressSecpPubKey, len(secp256k1Addrs))
 
 	var dbtx walletdb.ReadTx
 	var addrmgrNs walletdb.ReadBucket
@@ -44,11 +44,11 @@ func (w *Wallet) MakeSecp256k1MultiSigScript(secp256k1Addrs []dcrutil.Address, n
 		default:
 			return nil, errors.E(op, errors.Invalid, "address key is not secp256k1")
 
-		case *dcrutil.AddressSecpPubKey:
+		case *vhcutil.AddressSecpPubKey:
 			secp256k1PubKeys[i] = addr
 
-		case *dcrutil.AddressPubKeyHash:
-			if addr.DSA(w.chainParams) != dcrec.STEcdsaSecp256k1 {
+		case *vhcutil.AddressPubKeyHash:
+			if addr.DSA(w.chainParams) != vhcec.STEcdsaSecp256k1 {
 				return nil, errors.E(op, errors.Invalid, "address key is not secp256k1")
 			}
 
@@ -67,7 +67,7 @@ func (w *Wallet) MakeSecp256k1MultiSigScript(secp256k1Addrs []dcrutil.Address, n
 			serializedPubKey := addrInfo.(udb.ManagedPubKeyAddress).
 				PubKey().Serialize()
 
-			pubKeyAddr, err := dcrutil.NewAddressSecpPubKey(
+			pubKeyAddr, err := vhcutil.NewAddressSecpPubKey(
 				serializedPubKey, w.chainParams)
 			if err != nil {
 				return nil, err
@@ -84,10 +84,10 @@ func (w *Wallet) MakeSecp256k1MultiSigScript(secp256k1Addrs []dcrutil.Address, n
 }
 
 // ImportP2SHRedeemScript adds a P2SH redeem script to the wallet.
-func (w *Wallet) ImportP2SHRedeemScript(script []byte) (*dcrutil.AddressScriptHash, error) {
+func (w *Wallet) ImportP2SHRedeemScript(script []byte) (*vhcutil.AddressScriptHash, error) {
 	const op errors.Op = "wallet.ImportP2SHRedeemScript"
 
-	var p2shAddr *dcrutil.AddressScriptHash
+	var p2shAddr *vhcutil.AddressScriptHash
 	err := walletdb.Update(w.db, func(tx walletdb.ReadWriteTx) error {
 		addrmgrNs := tx.ReadWriteBucket(waddrmgrNamespaceKey)
 		txmgrNs := tx.ReadWriteBucket(wtxmgrNamespaceKey)
@@ -105,14 +105,14 @@ func (w *Wallet) ImportP2SHRedeemScript(script []byte) (*dcrutil.AddressScriptHa
 			if errors.Is(errors.Exist, err) {
 				// This function will never error as it always
 				// hashes the script to the correct length.
-				p2shAddr, _ = dcrutil.NewAddressScriptHash(script,
+				p2shAddr, _ = vhcutil.NewAddressScriptHash(script,
 					w.chainParams)
 				return nil
 			}
 			return err
 		}
 
-		p2shAddr = addrInfo.Address().(*dcrutil.AddressScriptHash)
+		p2shAddr = addrInfo.Address().(*vhcutil.AddressScriptHash)
 		return nil
 	})
 	if err != nil {
@@ -146,7 +146,7 @@ func (w *Wallet) FetchP2SHMultiSigOutput(outPoint *wire.OutPoint) (*P2SHMultiSig
 		return nil, errors.E(op, err)
 	}
 
-	p2shAddr, err := dcrutil.NewAddressScriptHashFromHash(
+	p2shAddr, err := vhcutil.NewAddressScriptHashFromHash(
 		mso.ScriptHash[:], w.chainParams)
 	if err != nil {
 		return nil, err

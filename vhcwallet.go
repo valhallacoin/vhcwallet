@@ -19,21 +19,21 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/decred/dcrd/addrmgr"
-	"github.com/decred/dcrd/chaincfg"
-	dcrrpcclient "github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrwallet/chain"
-	"github.com/decred/dcrwallet/errors"
-	"github.com/decred/dcrwallet/internal/prompt"
-	"github.com/decred/dcrwallet/internal/zero"
-	ldr "github.com/decred/dcrwallet/loader"
-	"github.com/decred/dcrwallet/p2p"
-	"github.com/decred/dcrwallet/rpc/legacyrpc"
-	"github.com/decred/dcrwallet/rpc/rpcserver"
-	"github.com/decred/dcrwallet/spv"
-	"github.com/decred/dcrwallet/ticketbuyer/v2"
-	"github.com/decred/dcrwallet/version"
-	"github.com/decred/dcrwallet/wallet"
+	"github.com/valhallacoin/vhcd/addrmgr"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
+	"github.com/valhallacoin/vhcwallet/chain"
+	"github.com/valhallacoin/vhcwallet/errors"
+	"github.com/valhallacoin/vhcwallet/internal/prompt"
+	"github.com/valhallacoin/vhcwallet/internal/zero"
+	ldr "github.com/valhallacoin/vhcwallet/loader"
+	"github.com/valhallacoin/vhcwallet/p2p"
+	"github.com/valhallacoin/vhcwallet/rpc/legacyrpc"
+	"github.com/valhallacoin/vhcwallet/rpc/rpcserver"
+	"github.com/valhallacoin/vhcwallet/spv"
+	"github.com/valhallacoin/vhcwallet/ticketbuyer/v2"
+	"github.com/valhallacoin/vhcwallet/version"
+	"github.com/valhallacoin/vhcwallet/wallet"
 )
 
 func init() {
@@ -309,7 +309,7 @@ func run(ctx context.Context) error {
 
 	// When not running with --noinitialload, it is the main package's
 	// responsibility to synchronize the wallet with the network through SPV or
-	// the trusted dcrd server.  This blocks until cancelled.
+	// the trusted vhcd server.  This blocks until cancelled.
 	if !cfg.NoInitialLoad {
 		if done(ctx) {
 			return ctx.Err()
@@ -506,17 +506,17 @@ func readCAFile() []byte {
 	return certs
 }
 
-// startChainRPC opens a RPC client connection to a dcrd server for blockchain
+// startChainRPC opens a RPC client connection to a vhcd server for blockchain
 // services.  This function uses the RPC options from the global config and
 // there is no recovery in case the server is not available or if there is an
 // authentication error.  Instead, all requests to the client will simply error.
 func startChainRPC(ctx context.Context, certs []byte) (*chain.RPCClient, error) {
 	log.Infof("Attempting RPC client connection to %v", cfg.RPCConnect)
-	rpcc, err := chain.NewRPCClientConfig(activeNet.Params, &dcrrpcclient.ConnConfig{
+	rpcc, err := chain.NewRPCClientConfig(activeNet.Params, &vhcrpcclient.ConnConfig{
 		Host:                 cfg.RPCConnect,
 		Endpoint:             "ws",
-		User:                 cfg.DcrdUsername,
-		Pass:                 cfg.DcrdPassword,
+		User:                 cfg.VhcdUsername,
+		Pass:                 cfg.VhcdPassword,
 		Certificates:         certs,
 		DisableAutoReconnect: true,
 		DisableConnectOnNew:  true,

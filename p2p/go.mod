@@ -1,15 +1,15 @@
-module github.com/decred/dcrwallet/p2p
+module github.com/valhallacoin/vhcwallet/p2p
 
 require (
-	github.com/decred/dcrd/addrmgr v1.0.2
-	github.com/decred/dcrd/chaincfg v1.2.0
-	github.com/decred/dcrd/chaincfg/chainhash v1.0.1
-	github.com/decred/dcrd/connmgr v1.0.2
-	github.com/decred/dcrd/gcs v1.0.2
-	github.com/decred/dcrd/wire v1.2.0
-	github.com/decred/dcrwallet/errors v1.0.1
-	github.com/decred/dcrwallet/lru v1.0.0
-	github.com/decred/dcrwallet/version v1.0.1
+	github.com/valhallacoin/vhcd/addrmgr v1.0.2
+	github.com/valhallacoin/vhcd/chaincfg v1.2.0
+	github.com/valhallacoin/vhcd/chaincfg/chainhash v1.0.1
+	github.com/valhallacoin/vhcd/connmgr v1.0.2
+	github.com/valhallacoin/vhcd/gcs v1.0.2
+	github.com/valhallacoin/vhcd/wire v1.2.0
+	github.com/valhallacoin/vhcwallet/errors v1.0.1
+	github.com/valhallacoin/vhcwallet/lru v1.0.0
+	github.com/valhallacoin/vhcwallet/version v1.0.1
 	github.com/decred/slog v1.0.0
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect

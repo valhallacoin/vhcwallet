@@ -14,12 +14,12 @@ import (
 	"io"
 	"os"
 
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrutil/hdkeychain"
-	"github.com/decred/dcrwallet/wallet/walletdb"
-	_ "github.com/decred/dcrwallet/wallet/internal/bdb"
-	"github.com/decred/dcrwallet/wallet/udb"
-	"github.com/decred/dcrwallet/walletseed"
+	"github.com/valhallacoin/vhcd/chaincfg"
+	"github.com/valhallacoin/vhcutil/hdkeychain"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
+	_ "github.com/valhallacoin/vhcwallet/wallet/internal/bdb"
+	"github.com/valhallacoin/vhcwallet/wallet/udb"
+	"github.com/valhallacoin/vhcwallet/walletseed"
 )
 
 const dbname = "v1.db"

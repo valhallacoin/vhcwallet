@@ -9,17 +9,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/valhallacoin/vhcd/vhcutil"
 )
 
-// AmountFlag embeds a dcrutil.Amount and implements the flags.Marshaler and
+// AmountFlag embeds a vhcutil.Amount and implements the flags.Marshaler and
 // Unmarshaler interfaces so it can be used as a config struct field.
 type AmountFlag struct {
-	dcrutil.Amount
+	vhcutil.Amount
 }
 
-// NewAmountFlag creates an AmountFlag with a default dcrutil.Amount.
-func NewAmountFlag(defaultValue dcrutil.Amount) *AmountFlag {
+// NewAmountFlag creates an AmountFlag with a default vhcutil.Amount.
+func NewAmountFlag(defaultValue vhcutil.Amount) *AmountFlag {
 	return &AmountFlag{defaultValue}
 }
 
@@ -30,12 +30,12 @@ func (a *AmountFlag) MarshalFlag() (string, error) {
 
 // UnmarshalFlag satisifes the flags.Unmarshaler interface.
 func (a *AmountFlag) UnmarshalFlag(value string) error {
-	value = strings.TrimSuffix(value, " DCR")
+	value = strings.TrimSuffix(value, " VHC")
 	valueF64, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		return err
 	}
-	amount, err := dcrutil.NewAmount(valueF64)
+	amount, err := vhcutil.NewAmount(valueF64)
 	if err != nil {
 		return err
 	}

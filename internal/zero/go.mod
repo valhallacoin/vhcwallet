@@ -1,3 +1,3 @@
-module github.com/decred/dcrwallet/internal/zero
+module github.com/valhallacoin/vhcwallet/internal/zero
 
-require github.com/decred/dcrwallet/errors v1.0.1
+require github.com/valhallacoin/vhcwallet/errors v1.0.1
