@@ -11,8 +11,8 @@ import (
 
 	"github.com/valhallacoin/vhcd/blockchain"
 	"github.com/valhallacoin/vhcd/blockchain/stake"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/wire"
 )
 

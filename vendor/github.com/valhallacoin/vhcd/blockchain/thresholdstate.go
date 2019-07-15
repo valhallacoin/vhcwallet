@@ -656,7 +656,7 @@ func (b *BlockChain) isFixSeqLocksAgendaActive(prevNode *blockNode) (bool, error
 	// Consensus voting on the fix sequence locks agenda is only enabled on
 	// mainnet, testnet v3, and regnet.
 	net := b.chainParams.Net
-	if net != wire.MainNet && net != wire.TestNet3 && net != wire.RegNet {
+	if net != wire.MainNet && net != wire.TestNet && net != wire.RegNet {
 		return true, nil
 	}
 

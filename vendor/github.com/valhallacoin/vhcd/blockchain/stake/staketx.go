@@ -17,9 +17,9 @@ import (
 
 	"github.com/valhallacoin/vhcd/chaincfg"
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
+	"github.com/valhallacoin/vhcd/txscript"
 	"github.com/valhallacoin/vhcd/vhcec"
 	"github.com/valhallacoin/vhcd/vhcutil"
-	"github.com/valhallacoin/vhcd/txscript"
 	"github.com/valhallacoin/vhcd/wire"
 )
 

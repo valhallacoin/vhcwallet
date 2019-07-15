@@ -11,22 +11,21 @@ import (
 	"github.com/valhallacoin/vhcd/wire"
 )
 
-// TestNet3Params defines the network parameters for the test currency network.
+// TestNetParams defines the network parameters for the test currency network.
 // This network is sometimes simply called "testnet".
-// This is the third public iteration of testnet.
-var TestNet3Params = Params{
-	Name:        "testnet3",
-	Net:         wire.TestNet3,
-	DefaultPort: "19108",
+var TestNetParams = Params{
+	Name:        "testnet",
+	Net:         wire.TestNet,
+	DefaultPort: "19208",
 	DNSSeeds: []DNSSeed{
-		{"testnet-seed.valhallacoin.minvhcy.org", true},
-		{"testnet-seed.valhallacoin.netpurgatory.com", true},
-		{"testnet-seed.valhallacoin.org", true},
+		{"testnet-seed.valhallacoin.org", false},
+		{"testnet-seed.valhall.cash", false},
+		// TODO: add .onion seeder
 	},
 
 	// Chain parameters
-	GenesisBlock:             &testNet3GenesisBlock,
-	GenesisHash:              &testNet3GenesisHash,
+	GenesisBlock:             &testNetGenesisBlock,
+	GenesisHash:              &testNetGenesisHash,
 	PowLimit:                 testNetPowLimit,
 	PowLimitBits:             0x1e00ffff,
 	ReduceMinDifficulty:      true,
@@ -51,9 +50,7 @@ var TestNet3Params = Params{
 	BlockTaxProportion:       1,
 
 	// Checkpoints ordered from oldest to newest.
-	Checkpoints: []Checkpoint{
-		{83520, newHashFromStr("0000000001e6244d95feae8b598e854905158c7bc781daf874afff88675ef0c8")},
-	},
+	Checkpoints: nil,
 
 	// Consensus rule change deployments.
 	//
@@ -150,5 +147,5 @@ var TestNet3Params = Params{
 	// Organization address is TcrypGAcGCRVXrES7hWqVZb5oLJKCZEtoL1.
 	OrganizationPkScript:        hexDecode("a914d585cd7426d25b4ea5faf1e6987aacfeda3db94287"),
 	OrganizationPkScriptVersion: 0,
-	BlockOneLedger:              BlockOneLedgerTestNet3,
+	BlockOneLedger:              BlockOneLedgerTestNet,
 }

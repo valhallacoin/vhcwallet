@@ -21,12 +21,12 @@ import (
 	"github.com/valhallacoin/vhcd/blockchain/stake"
 	"github.com/valhallacoin/vhcd/chaincfg"
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
-	"github.com/valhallacoin/vhcd/vhcec"
-	"github.com/valhallacoin/vhcd/vhcjson"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/hdkeychain"
 	"github.com/valhallacoin/vhcd/rpcclient"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcec"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/wire"
 	"github.com/valhallacoin/vhcwallet/chain"
 	"github.com/valhallacoin/vhcwallet/errors"
@@ -806,7 +806,7 @@ func getInfo(s *Server, icmd interface{}) (interface{}, error) {
 		Connections:     0,
 		Proxy:           "",
 		Difficulty:      difficultyRatio(tipHeader.Bits, w.ChainParams()),
-		TestNet:         w.ChainParams().Net == wire.TestNet3,
+		TestNet:         w.ChainParams().Net == wire.TestNet,
 		KeypoolOldest:   0,
 		KeypoolSize:     0,
 		UnlockedUntil:   0,

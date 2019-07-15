@@ -12,16 +12,16 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/jessevdk/go-flags"
 	"github.com/valhallacoin/vhcd/chaincfg"
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
-	"github.com/valhallacoin/vhcd/vhcjson"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/wire"
 	"github.com/valhallacoin/vhcwallet/wallet/txauthor"
 	"github.com/valhallacoin/vhcwallet/wallet/txrules"
-	"github.com/jessevdk/go-flags"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -95,7 +95,7 @@ func walletPort(net *chaincfg.Params) string {
 	switch net.Net {
 	case wire.MainNet:
 		return "9110"
-	case wire.TestNet3:
+	case wire.TestNet:
 		return "19110"
 	case wire.SimNet:
 		return "19557"
@@ -123,7 +123,7 @@ func init() {
 	}
 	var activeNet = &chaincfg.MainNetParams
 	if opts.TestNet {
-		activeNet = &chaincfg.TestNet3Params
+		activeNet = &chaincfg.TestNetParams
 	} else if opts.SimNet {
 		activeNet = &chaincfg.SimNetParams
 	}

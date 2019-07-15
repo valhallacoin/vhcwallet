@@ -15,9 +15,9 @@ import (
 	"github.com/boltdb/bolt"
 	"github.com/valhallacoin/vhcd/chaincfg"
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/gcs"
 	"github.com/valhallacoin/vhcd/gcs/blockcf"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/wire"
 	_ "github.com/valhallacoin/vhcwallet/wallet/drivers/bdb"
 	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
@@ -40,16 +40,16 @@ func setup() (db walletdb.DB, s *Store, teardown func(), err error) {
 		db.Close()
 		os.RemoveAll(tmpDir)
 	}
-	err = Initialize(db, &chaincfg.TestNet3Params, seed, pubPassphrase, privPassphrase)
+	err = Initialize(db, &chaincfg.TestNetParams, seed, pubPassphrase, privPassphrase)
 	if err != nil {
 		return
 	}
-	err = Upgrade(db, pubPassphrase, &chaincfg.TestNet3Params)
+	err = Upgrade(db, pubPassphrase, &chaincfg.TestNetParams)
 	if err != nil {
 		return
 	}
 	acctLookup := func(walletdb.ReadBucket, vhcutil.Address) (uint32, error) { return 0, nil }
-	s = &Store{chainParams: &chaincfg.TestNet3Params, acctLookupFunc: acctLookup}
+	s = &Store{chainParams: &chaincfg.TestNetParams, acctLookupFunc: acctLookup}
 	return
 }
 
@@ -90,7 +90,7 @@ type blockGenerator struct {
 }
 
 func makeBlockGenerator() blockGenerator {
-	return blockGenerator{lastHash: *chaincfg.TestNet3Params.GenesisHash}
+	return blockGenerator{lastHash: *chaincfg.TestNetParams.GenesisHash}
 }
 
 func (g *blockGenerator) generate(voteBits uint16) *wire.BlockHeader {

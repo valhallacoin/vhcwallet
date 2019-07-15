@@ -25,10 +25,10 @@ var MainNetParams = Params{
 	GRPCServerPort:    "9111",
 }
 
-// TestNet3Params contains parameters specific running vhcwallet and
-// vhcd on the test network (version 3) (wire.TestNet3).
-var TestNet3Params = Params{
-	Params:            &chaincfg.TestNet3Params,
+// TestNetParams contains parameters specific running vhcwallet and
+// vhcd on the test network (version 3) (wire.TestNet).
+var TestNetParams = Params{
+	Params:            &chaincfg.TestNetParams,
 	JSONRPCClientPort: "19109",
 	JSONRPCServerPort: "19110",
 	GRPCServerPort:    "19111",

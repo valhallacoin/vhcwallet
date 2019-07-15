@@ -9,8 +9,8 @@ import (
 	"fmt"
 
 	"github.com/valhallacoin/vhcd/blockchain/stake"
-	"github.com/valhallacoin/vhcd/vhcec/secp256k1"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcec/secp256k1"
 )
 
 // currentCompressionVersion is the current script compression version of the

@@ -10,8 +10,8 @@ import (
 
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
 	"github.com/valhallacoin/vhcd/database"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcutil"
 )
 
 // NextLotteryData returns the next tickets eligible for spending as SSGen

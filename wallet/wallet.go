@@ -16,27 +16,27 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jrick/bitset"
 	"github.com/valhallacoin/vhcd/blockchain"
 	"github.com/valhallacoin/vhcd/blockchain/stake"
 	"github.com/valhallacoin/vhcd/chaincfg"
 	"github.com/valhallacoin/vhcd/chaincfg/chainec"
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
-	"github.com/valhallacoin/vhcd/vhcec"
-	"github.com/valhallacoin/vhcd/vhcec/secp256k1"
-	"github.com/valhallacoin/vhcd/vhcjson"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/gcs"
 	"github.com/valhallacoin/vhcd/hdkeychain"
 	vhcrpcclient "github.com/valhallacoin/vhcd/rpcclient"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcec"
+	"github.com/valhallacoin/vhcd/vhcec/secp256k1"
+	"github.com/valhallacoin/vhcd/vhcjson"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/wire"
 	"github.com/valhallacoin/vhcwallet/deployments"
 	"github.com/valhallacoin/vhcwallet/errors"
-	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 	"github.com/valhallacoin/vhcwallet/wallet/txauthor"
 	"github.com/valhallacoin/vhcwallet/wallet/txrules"
 	"github.com/valhallacoin/vhcwallet/wallet/udb"
-	"github.com/jrick/bitset"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -214,9 +214,7 @@ func voteVersion(params *chaincfg.Params) uint32 {
 	switch params.Net {
 	case wire.MainNet:
 		return 5
-	case 0x48e7a065: // TestNet2
-		return 6
-	case wire.TestNet3:
+	case wire.TestNet:
 		return 6
 	case wire.SimNet:
 		return 6

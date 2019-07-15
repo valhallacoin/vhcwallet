@@ -16,6 +16,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/decred/slog"
+	flags "github.com/jessevdk/go-flags"
 	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcwallet/errors"
 	"github.com/valhallacoin/vhcwallet/internal/cfgutil"
@@ -24,8 +26,6 @@ import (
 	"github.com/valhallacoin/vhcwallet/version"
 	"github.com/valhallacoin/vhcwallet/wallet"
 	"github.com/valhallacoin/vhcwallet/wallet/txrules"
-	"github.com/decred/slog"
-	flags "github.com/jessevdk/go-flags"
 )
 
 const (
@@ -477,7 +477,7 @@ func loadConfig(ctx context.Context) (*config, []string, error) {
 	// Multiple networks can't be selected simultaneously.
 	numNets := 0
 	if cfg.TestNet {
-		activeNet = &netparams.TestNet3Params
+		activeNet = &netparams.TestNetParams
 		numNets++
 	}
 	if cfg.SimNet {

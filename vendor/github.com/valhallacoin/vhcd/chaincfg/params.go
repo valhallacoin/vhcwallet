@@ -658,7 +658,7 @@ func (p *Params) LatestCheckpointHeight() int64 {
 func init() {
 	// Register all default networks when the package is initialized.
 	mustRegister(&MainNetParams)
-	mustRegister(&TestNet3Params)
+	mustRegister(&TestNetParams)
 	mustRegister(&SimNetParams)
 	mustRegister(&RegNetParams)
 }

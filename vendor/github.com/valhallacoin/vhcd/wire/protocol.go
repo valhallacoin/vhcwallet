@@ -106,31 +106,25 @@ type CurrencyNet uint32
 // better idea to simply disconnect clients that are misbehaving over TCP.
 const (
 	// MainNet represents the main Valhalla network.
-	MainNet CurrencyNet = 0xd9b400f9
+	MainNet CurrencyNet = 0x4822831b
 
 	// RegNet represents the regression test network.
 	RegNet CurrencyNet = 0xdab500fa
 
-	// RegTest represents the regression test network.
-	//
-	// DEPRECATED.  This will be removed in the next major version bump.
-	// Use Regnet instead.
-	RegTest CurrencyNet = RegNet
-
-	// TestNet3 represents the 3rd test network.
-	TestNet3 CurrencyNet = 0xb194aa75
+	// TestNet represents the test network.
+	TestNet CurrencyNet = 0xcbd1dbf0
 
 	// SimNet represents the simulation test network.
-	SimNet CurrencyNet = 0x12141c16
+	SimNet CurrencyNet = 0x1ec442d2
 )
 
 // bnStrings is a map of Valhalla networks back to their constant names for
 // pretty printing.
 var bnStrings = map[CurrencyNet]string{
-	MainNet:  "MainNet",
-	TestNet3: "TestNet3",
-	RegNet:   "RegNet",
-	SimNet:   "SimNet",
+	MainNet: "MainNet",
+	TestNet: "TestNet",
+	RegNet:  "RegNet",
+	SimNet:  "SimNet",
 }
 
 // String returns the CurrencyNet in human-readable form.

@@ -15,17 +15,17 @@ import (
 	"github.com/valhallacoin/vhcd/chaincfg"
 	"github.com/valhallacoin/vhcd/chaincfg/chainec"
 	"github.com/valhallacoin/vhcd/chaincfg/chainhash"
-	"github.com/valhallacoin/vhcd/vhcec"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/mempool"
 	"github.com/valhallacoin/vhcd/txscript"
+	"github.com/valhallacoin/vhcd/vhcec"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/wire"
 	"github.com/valhallacoin/vhcwallet/errors"
 	"github.com/valhallacoin/vhcwallet/wallet/internal/txsizes"
-	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 	"github.com/valhallacoin/vhcwallet/wallet/txauthor"
 	"github.com/valhallacoin/vhcwallet/wallet/txrules"
 	"github.com/valhallacoin/vhcwallet/wallet/udb"
+	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
 
 // --------------------------------------------------------------------------------
@@ -462,7 +462,7 @@ func (w *Wallet) txToMultisigInternal(op errors.Op, dbtx walletdb.ReadWriteTx, a
 		feeEstForTx = 5e7
 	case 0x48e7a065: // testnet2
 		feeEstForTx = 5e7
-	case wire.TestNet3:
+	case wire.TestNet:
 		feeEstForTx = 5e7
 	default:
 		feeEstForTx = 3e4

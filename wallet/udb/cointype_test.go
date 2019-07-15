@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/valhallacoin/vhcd/chaincfg"
-	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcd/hdkeychain"
+	"github.com/valhallacoin/vhcd/vhcutil"
 	"github.com/valhallacoin/vhcwallet/errors"
 	"github.com/valhallacoin/vhcwallet/wallet/walletdb"
 )
@@ -22,7 +22,7 @@ func TestCoinTypes(t *testing.T) {
 		legacyCoinType, slip0044CoinType uint32
 	}{
 		{&chaincfg.MainNetParams, 20, 42},
-		{&chaincfg.TestNet3Params, 11, 1},
+		{&chaincfg.TestNetParams, 11, 1},
 		{&chaincfg.SimNetParams, 115, 1},
 	}
 	for _, test := range tests {
@@ -60,7 +60,7 @@ func TestCoinTypeUpgrade(t *testing.T) {
 	db, teardown := tempDB(t)
 	defer teardown()
 
-	params := &chaincfg.TestNet3Params
+	params := &chaincfg.TestNetParams
 
 	err := Initialize(db, params, seed, pubPass, privPassphrase)
 	if err != nil {

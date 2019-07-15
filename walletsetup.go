@@ -33,7 +33,7 @@ func networkDir(dataDir string, chainParams *chaincfg.Params) string {
 	switch chainParams.Net {
 	case 0x48e7a065: // testnet2
 		netname = "testnet2"
-	case wire.TestNet3:
+	case wire.TestNet:
 		netname = "testnet3"
 	}
 	return filepath.Join(dataDir, netname)
