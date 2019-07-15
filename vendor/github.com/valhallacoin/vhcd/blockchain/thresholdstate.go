@@ -603,10 +603,9 @@ func (b *BlockChain) NextThresholdState(hash *chainhash.Hash, version uint32, de
 //
 // This function MUST be called with the chain state lock held (for writes).
 func (b *BlockChain) isLNFeaturesAgendaActive(prevNode *blockNode) (bool, error) {
-	// Consensus voting on LN features is only enabled on mainnet, testnet
-	// v2 (removed from code), and regnet.
+	// Consensus voting on LN features is only on regnet.
 	net := b.chainParams.Net
-	if net != wire.MainNet && net != wire.RegNet {
+	if net != wire.RegNet {
 		return true, nil
 	}
 
@@ -654,9 +653,9 @@ func (b *BlockChain) IsLNFeaturesAgendaActive() (bool, error) {
 // This function MUST be called with the chain state lock held (for writes).
 func (b *BlockChain) isFixSeqLocksAgendaActive(prevNode *blockNode) (bool, error) {
 	// Consensus voting on the fix sequence locks agenda is only enabled on
-	// mainnet, testnet v3, and regnet.
+	// testnet and regnet.
 	net := b.chainParams.Net
-	if net != wire.MainNet && net != wire.TestNet && net != wire.RegNet {
+	if net != wire.TestNet && net != wire.RegNet {
 		return true, nil
 	}
 
