@@ -1,0 +1,124 @@
+# github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412
+github.com/agl/ed25519
+github.com/agl/ed25519/edwards25519
+# github.com/boltdb/bolt v1.3.1
+github.com/boltdb/bolt
+# github.com/btcsuite/go-socks v0.0.0-20170105172521-4720035b7bfd
+github.com/btcsuite/go-socks/socks
+# github.com/dchest/blake256 v1.0.0
+github.com/dchest/blake256
+# github.com/dchest/siphash v1.2.1
+github.com/dchest/siphash
+# github.com/decred/base58 v1.0.0
+github.com/decred/base58
+# github.com/decred/slog v1.0.0
+github.com/decred/slog
+# github.com/golang/protobuf v1.3.2
+github.com/golang/protobuf/proto
+github.com/golang/protobuf/ptypes
+github.com/golang/protobuf/ptypes/any
+github.com/golang/protobuf/ptypes/duration
+github.com/golang/protobuf/ptypes/timestamp
+# github.com/gorilla/websocket v1.4.0
+github.com/gorilla/websocket
+# github.com/jessevdk/go-flags v1.4.0
+github.com/jessevdk/go-flags
+# github.com/jrick/bitset v1.0.0
+github.com/jrick/bitset
+# github.com/jrick/logrotate v1.0.0
+github.com/jrick/logrotate/rotator
+# github.com/valhallacoin/vhcd v0.0.0-20190715172714-780040152f64
+github.com/valhallacoin/vhcd/addrmgr
+github.com/valhallacoin/vhcd/certgen
+github.com/valhallacoin/vhcd/chaincfg
+github.com/valhallacoin/vhcd/connmgr
+github.com/valhallacoin/vhcd/hdkeychain
+github.com/valhallacoin/vhcd/rpcclient
+github.com/valhallacoin/vhcd/vhcutil
+github.com/valhallacoin/vhcd/wire
+github.com/valhallacoin/vhcd/chaincfg/chainhash
+github.com/valhallacoin/vhcd/gcs
+github.com/valhallacoin/vhcd/txscript
+github.com/valhallacoin/vhcd/vhcjson
+github.com/valhallacoin/vhcd/gcs/blockcf
+github.com/valhallacoin/vhcd/blockchain
+github.com/valhallacoin/vhcd/blockchain/stake
+github.com/valhallacoin/vhcd/vhcec
+github.com/valhallacoin/vhcd/chaincfg/chainec
+github.com/valhallacoin/vhcd/mempool
+github.com/valhallacoin/vhcd/vhcec/secp256k1
+github.com/valhallacoin/vhcd/vhcec/edwards
+github.com/valhallacoin/vhcd/vhcec/secp256k1/schnorr
+github.com/valhallacoin/vhcd/blockchain/internal/dbnamespace
+github.com/valhallacoin/vhcd/blockchain/internal/progresslog
+github.com/valhallacoin/vhcd/database
+github.com/valhallacoin/vhcd/blockchain/stake/internal/dbnamespace
+github.com/valhallacoin/vhcd/blockchain/stake/internal/ticketdb
+github.com/valhallacoin/vhcd/blockchain/stake/internal/tickettreap
+github.com/valhallacoin/vhcd/blockchain/indexers
+github.com/valhallacoin/vhcd/mining
+github.com/valhallacoin/vhcd/blockchain/chaingen
+# golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
+golang.org/x/crypto/ssh/terminal
+golang.org/x/crypto/ripemd160
+golang.org/x/crypto/nacl/secretbox
+golang.org/x/crypto/scrypt
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/poly1305
+golang.org/x/crypto/salsa20/salsa
+golang.org/x/crypto/pbkdf2
+# golang.org/x/net v0.0.0-20190628185345-da137c7871d7
+golang.org/x/net/context
+golang.org/x/net/trace
+golang.org/x/net/internal/timeseries
+golang.org/x/net/http2
+golang.org/x/net/http2/hpack
+golang.org/x/net/http/httpguts
+golang.org/x/net/idna
+# golang.org/x/sync v0.0.0-20190423024810-112230192c58
+golang.org/x/sync/errgroup
+# golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+golang.org/x/sys/cpu
+# golang.org/x/text v0.3.2
+golang.org/x/text/secure/bidirule
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/transform
+# google.golang.org/genproto v0.0.0-20190708153700-3bdd9d9f5532
+google.golang.org/genproto/googleapis/rpc/status
+# google.golang.org/grpc v1.22.0
+google.golang.org/grpc
+google.golang.org/grpc/credentials
+google.golang.org/grpc/peer
+google.golang.org/grpc/codes
+google.golang.org/grpc/grpclog
+google.golang.org/grpc/status
+google.golang.org/grpc/balancer
+google.golang.org/grpc/balancer/roundrobin
+google.golang.org/grpc/connectivity
+google.golang.org/grpc/encoding
+google.golang.org/grpc/encoding/proto
+google.golang.org/grpc/internal
+google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/balancerload
+google.golang.org/grpc/internal/binarylog
+google.golang.org/grpc/internal/channelz
+google.golang.org/grpc/internal/envconfig
+google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/grpcsync
+google.golang.org/grpc/internal/transport
+google.golang.org/grpc/keepalive
+google.golang.org/grpc/metadata
+google.golang.org/grpc/naming
+google.golang.org/grpc/resolver
+google.golang.org/grpc/resolver/dns
+google.golang.org/grpc/resolver/passthrough
+google.golang.org/grpc/serviceconfig
+google.golang.org/grpc/stats
+google.golang.org/grpc/tap
+google.golang.org/grpc/credentials/internal
+google.golang.org/grpc/balancer/base
+google.golang.org/grpc/binarylog/grpc_binarylog_v1
+google.golang.org/grpc/internal/syscall
