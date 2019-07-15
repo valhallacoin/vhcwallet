@@ -1,5 +1,5 @@
 all:
-	env GO111MODULE=on go install -v .
+	env GO111MODULE=on go install -mod vendor -v .
 
 .PHONY: clean test update-vendor
 clean:
