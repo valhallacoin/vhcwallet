@@ -11,8 +11,7 @@ var BlockOneLedgerMainNet = []*TokenPayout{}
 
 // BlockOneLedgerTestNet is the block one output ledger for testnet version 3.
 var BlockOneLedgerTestNet = []*TokenPayout{
-	{"Tsh7Bi4LyQ5gSL7LGztXBi3emWavwtBeTtt", 80000 * 1e8},
-	{"TsdHzFubGwFo7A71LvD3Xo4RyVjuqMiTa7G", 20000 * 1e8},
+	{"TsnHhYH48JY4Li5nC25Y3pcvcvgFehRzjuT", 100000 * 1e8},
 }
 
 // BlockOneLedgerSimNet is the block one output ledger for the simulation

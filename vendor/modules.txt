@@ -27,7 +27,7 @@ github.com/jessevdk/go-flags
 github.com/jrick/bitset
 # github.com/jrick/logrotate v1.0.0
 github.com/jrick/logrotate/rotator
-# github.com/valhallacoin/vhcd v0.0.0-20190715225009-4bf884029e06
+# github.com/valhallacoin/vhcd v0.0.0-20190716221354-cf780d5d2af5
 github.com/valhallacoin/vhcd/addrmgr
 github.com/valhallacoin/vhcd/certgen
 github.com/valhallacoin/vhcd/chaincfg
@@ -86,7 +86,7 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/transform
-# google.golang.org/genproto v0.0.0-20190708153700-3bdd9d9f5532
+# google.golang.org/genproto v0.0.0-20190716160619-c506a9f90610
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.22.0
 google.golang.org/grpc

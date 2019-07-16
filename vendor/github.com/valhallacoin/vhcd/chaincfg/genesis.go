@@ -77,7 +77,7 @@ var genesisBlock = wire.MsgBlock{
 		MerkleRoot:   genesisMerkleRoot,
 		StakeRoot:    chainhash.Hash{},
 		Timestamp:    time.Unix(1454954400, 0), // Mon, 08 Feb 2016 18:00:00 GMT
-		Bits:         0x1d00ffff,               // Difficulty 1
+		Bits:         0x1d00ffff,               // Difficulty 1 [000000ffff000000000000000000000000000000000000000000000000000000]
 		SBits:        2 * 1e8,                  // 2 Coin
 		Nonce:        0x00000000,
 		StakeVersion: 0,
@@ -141,10 +141,10 @@ var genesisCoinbaseTxLegacy = wire.MsgTx{
 // serves as the public transaction ledger for the test network (version 3).
 var testNetGenesisBlock = wire.MsgBlock{
 	Header: wire.BlockHeader{
-		Version:      4, // TODO: correct version
+		Version:      4, // TODO: correct version?
 		PrevBlock:    chainhash.Hash{},
 		MerkleRoot:   genesisCoinbaseTx.TxHash(),
-		Timestamp:    time.Unix(1563221794, 0), // 2019-07-15T20:16:34Z
+		Timestamp:    time.Unix(1563314544, 0), // 2019-07-16T22:02:24Z
 		Bits:         0x1e00ffff,               // Difficulty 1 [000000ffff000000000000000000000000000000000000000000000000000000]
 		SBits:        20000000,
 		Nonce:        0xcbe5b0f5,

@@ -19,8 +19,10 @@ var TestNetParams = Params{
 	DefaultPort: "19208",
 	DNSSeeds: []DNSSeed{
 		{"testnet-seed.valhallacoin.org", false},
-		{"testnet-seed.valhall.cash", false},
-		// TODO: add .onion seeder
+		{"testnet-seed.valhallacoin.net", false},
+		{"testnet-seed.valhalla.cash", false},
+		{"d4snyonmvnxyubznqq4e2d3jzge2dphr7n4ikc253yosq7ebilvdzsid.onion", false},
+		{"qsell64hbqzldcc2bznxjdx2avsbs7h2xrpy63fnpihlfgoapjyeftyd.onion", false},
 	},
 
 	// Chain parameters
@@ -144,8 +146,8 @@ var TestNetParams = Params{
 	StakeMajorityDivisor:    4,
 
 	// Valhalla organization related parameters.
-	// Organization address is TsmxvfRk9HMYtpbt4odeL6S8YpJZKYieFMQ
-	OrganizationPkScript:        hexDecode("76a914e5bf886b55b33f6ebb28075c63c8adf2e2203b0388ac"),
+	// Organization address is TsnK11KjNihw9qSSEPDrQiZsedvDKa9VG3u
+	OrganizationPkScript:        hexDecode("76a914e98b7a3e26aee2d5dc1112e2e8990617cfdcd06988ac"),
 	OrganizationPkScriptVersion: 0,
 	BlockOneLedger:              BlockOneLedgerTestNet,
 }
