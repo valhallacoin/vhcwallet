@@ -19,8 +19,9 @@ var MainNetParams = Params{
 	DNSSeeds: []DNSSeed{
 		{"mainnet-seed.valhallacoin.org", false},
 		{"mainnet-seed.valhallacoin.net", false},
-		{"mainnet-seed.valhalla.cash", true},
-		// TODO: add .onion seeder
+		{"mainnet-seed.valhalla.cash", false},
+		{"4lwath4bjyvusry7nvnjs422ul5xctqsfnqath3slakgvrygwfkkbrad.onion", false},
+		{"fcqyugpdxl7r4oyge5hii3msah56yichkf7gwqldhxbtdqw3guol2pid.onion", false},
 	},
 
 	// Chain parameters
