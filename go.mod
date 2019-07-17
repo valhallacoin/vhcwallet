@@ -8,7 +8,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/jrick/bitset v1.0.0
 	github.com/jrick/logrotate v1.0.0
-	github.com/valhallacoin/vhcd v0.0.0-20190717011153-12bed02e686d
+	github.com/valhallacoin/vhcd v0.0.0-20190717141011-f2512c8adc05
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58

@@ -53,8 +53,8 @@ github.com/onsi/ginkgo v1.8.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+W
 github.com/onsi/gomega v1.4.1/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
 github.com/onsi/gomega v1.5.0 h1:izbySO9zDPmjJ8rDjLvkA2zJHIo+HkYXHnf7eN7SSyo=
 github.com/onsi/gomega v1.5.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
-github.com/valhallacoin/vhcd v0.0.0-20190717011153-12bed02e686d h1:ZJoetR3un3bE/gCpdnHD/9QpfaDb9OwRhQ59aerLtU4=
-github.com/valhallacoin/vhcd v0.0.0-20190717011153-12bed02e686d/go.mod h1:cAN1PPbMRAzNpLvXk8bpn68GqiB1Gyt8rMgJdJjEcNE=
+github.com/valhallacoin/vhcd v0.0.0-20190717141011-f2512c8adc05 h1:mpuS+86YWFw9t+bdlxTz1iWq+lOKcROSO0LsJP97NCc=
+github.com/valhallacoin/vhcd v0.0.0-20190717141011-f2512c8adc05/go.mod h1:cAN1PPbMRAzNpLvXk8bpn68GqiB1Gyt8rMgJdJjEcNE=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 h1:HuIa8hRrWRSrqYzx1qI49NNxhdi2PrY7gxVSq1JjLDc=
 golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=

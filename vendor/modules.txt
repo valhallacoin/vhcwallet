@@ -27,7 +27,7 @@ github.com/jessevdk/go-flags
 github.com/jrick/bitset
 # github.com/jrick/logrotate v1.0.0
 github.com/jrick/logrotate/rotator
-# github.com/valhallacoin/vhcd v0.0.0-20190717011153-12bed02e686d
+# github.com/valhallacoin/vhcd v0.0.0-20190717141011-f2512c8adc05
 github.com/valhallacoin/vhcd/addrmgr
 github.com/valhallacoin/vhcd/certgen
 github.com/valhallacoin/vhcd/chaincfg

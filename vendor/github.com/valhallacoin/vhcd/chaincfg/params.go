@@ -161,9 +161,7 @@ const (
 	// increase agenda used for the hard fork demo.
 	VoteIDMaxBlockSize = "maxblocksize"
 
-	// VoteIDSDiffAlgorithm is the vote ID for the new stake difficulty
-	// algorithm (aka ticket price) agenda defined by DCP0001.
-	VoteIDSDiffAlgorithm = "sdiffalgorithm"
+	// VoteIDSDiffAlgorithm (DCP0001) removed.
 
 	// VoteIDLNSupport is the vote ID for determining if the developers
 	// should work on integrating Lightning Network support.

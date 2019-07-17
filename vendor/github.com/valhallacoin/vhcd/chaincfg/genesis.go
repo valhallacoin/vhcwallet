@@ -76,7 +76,7 @@ var genesisBlock = wire.MsgBlock{
 		PrevBlock:    chainhash.Hash{},
 		MerkleRoot:   genesisMerkleRoot,
 		StakeRoot:    chainhash.Hash{},
-		Timestamp:    time.Unix(1563325819, 0), // 2019-07-17T01:10:19Z
+		Timestamp:    time.Unix(1563372582, 0), // 2019-07-17T14:09:42Z
 		Bits:         0x1d00ffff,               // Difficulty 1
 		SBits:        2 * 1e8,                  // 2 Coin
 		Nonce:        0x00000000,
