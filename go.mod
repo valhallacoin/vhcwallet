@@ -1,5 +1,7 @@
 module github.com/valhallacoin/vhcwallet
 
+go 1.13
+
 require (
 	github.com/boltdb/bolt v1.3.1
 	github.com/decred/slog v1.0.0
@@ -12,7 +14,6 @@ require (
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
-	google.golang.org/appengine v1.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20190716160619-c506a9f90610 // indirect
 	google.golang.org/grpc v1.22.0
 )
