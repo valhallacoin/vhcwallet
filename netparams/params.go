@@ -21,8 +21,8 @@ type Params struct {
 var MainNetParams = Params{
 	Params:            &chaincfg.MainNetParams,
 	JSONRPCClientPort: "9209",
-	JSONRPCServerPort: "9110",
-	GRPCServerPort:    "9111",
+	JSONRPCServerPort: "9210",
+	GRPCServerPort:    "9211",
 }
 
 // TestNetParams contains parameters specific running vhcwallet and
@@ -30,8 +30,8 @@ var MainNetParams = Params{
 var TestNetParams = Params{
 	Params:            &chaincfg.TestNetParams,
 	JSONRPCClientPort: "19209",
-	JSONRPCServerPort: "19110",
-	GRPCServerPort:    "19111",
+	JSONRPCServerPort: "19210",
+	GRPCServerPort:    "19211",
 }
 
 // SimNetParams contains parameters specific to the simulation test network
